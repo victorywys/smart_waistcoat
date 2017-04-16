@@ -10,32 +10,39 @@
         android:layout_height="0dp"
         android:layout_weight="6">
 
-        <com.androidplot.xy.XYPlot
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/main_plot_ecg"
-            style="@style/APDefacto.Light"/>
+            android:orientation="vertical">
+            <com.androidplot.xy.XYPlot
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/main_plot_ecg"
+                style="@style/APDefacto.Light"/>
 
-        <com.androidplot.xy.XYPlot
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/main_plot_ecg"
-            style="@style/APDefacto.Light"
-            android:id="@+id/main_plot_impulse"
-            ap:title="impulse"/>
+            <com.androidplot.xy.XYPlot
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                style="@style/APDefacto.Light"
+                android:id="@+id/main_plot_impulse"
+                ap:title="impulse"/>
 
-        <com.androidplot.xy.XYPlot
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/main_plot_impulse"
-            android:id="@+id/main_plot_strike"
-            style="@style/APDefacto.Light"/>
+            <com.androidplot.xy.XYPlot
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/main_plot_strike"
+                style="@style/APDefacto.Light"/>
+        </LinearLayout>
+
 
     </RelativeLayout>
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
