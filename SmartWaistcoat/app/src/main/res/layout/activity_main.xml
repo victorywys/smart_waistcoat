@@ -14,7 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/linear_table"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -173,9 +174,57 @@
                 style="@style/APDefacto.Light"/>
         </LinearLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/relative_setting">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="设置"
+                android:id="@+id/text_setting1"
+                android:textSize="30sp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="个人信息"
+                android:textSize="24sp"
+                android:id="@+id/text_setting2"
+                android:layout_below="@+id/text_setting1"
+                android:onClick="onClickSettingPersonInfo"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_setting3"
+                android:layout_below="@+id/text_setting2"
+                android:text="紧急联系人"
+                android:textSize="24sp"
+                android:onClick="onClickEmergencyContact"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_setting4"
+                android:layout_below="@id/text_setting3"
+                android:text="报警"
+                android:textSize="24sp"
+                android:onClick="onClickAlarm"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_setting5"
+                android:layout_below="@+id/text_setting4"
+                android:text="设备"
+                android:textSize="24sp"
+                android:onClick="onClickDevice"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"

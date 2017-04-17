@@ -9,8 +9,6 @@ import com.androidplot.xy.XYPlot;
 import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
 
-import java.util.concurrent.LinkedBlockingQueue;
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -32,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         mainController.onResume();
     }
 

@@ -28,7 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 public class WiFiConnectService extends Service {
-    private static final String TAG = "PlanADataService";
+    private static final String TAG = "WiFiConnectService";
 
     private final int WAITING_TIME = 2500;
     private final int SERVER_PORT = 10181;
