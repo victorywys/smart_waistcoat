@@ -1,11 +1,15 @@
 package com.example.wanghf.smartwaistcoat;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import com.androidplot.xy.XYPlot;
 import com.example.wanghf.myapplication.R;
+import com.example.wanghf.smartwaistcoat.controller.MainController;
+
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -13,13 +17,22 @@ public class MainActivity extends AppCompatActivity {
     private XYPlot impulsePlot;
 
     private boolean showingCurve;
+    private MainController mainController;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        context = this;
 
+        mainController = new MainController(context, MainApplication.getQueue());
+    }
+
+    @Override
+    protected void onResume() {
+        mainController.onResume();
     }
 
     private void initPlots() {

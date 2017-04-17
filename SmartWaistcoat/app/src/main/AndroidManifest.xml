@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
 
     <application
+        android:name="com.example.wanghf.smartwaistcoat.MainApplication"
         android:allowBackup="true"
+        android:label="smartcoat"
         android:icon="@drawable/icon"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -20,6 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.example.wanghf.smartwaistcoat.inputdata.WiFiConnectService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <service
+            android:name="com.example.wanghf.smartwaistcoat.inputdata.DataParseService"
+            android:enabled="true"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

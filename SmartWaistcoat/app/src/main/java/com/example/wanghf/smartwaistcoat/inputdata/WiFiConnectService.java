@@ -28,21 +28,21 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 
 public class WiFiConnectService extends Service {
-    private final String TAG = "PlanADataService";
+    private static final String TAG = "PlanADataService";
+
+    private final int WAITING_TIME = 2500;
+    private final int SERVER_PORT = 10181;
 
     // 广播相关
     public final static String ACTION_COUNT_NUMBER = "test.gps.ACTION_COUNT_NUMBER";
     public final static String ACTION_DISCONNECT_NUMBER = "test.gps.DISCONNECT_NUMBER";
     public final static String ACTION_REASON_TYPE = "test.gps.ACTION_REASON_TYPE";
-    public final static String ACTION_BREAK_POINT = "test.gps.ACTION_BREAK_POINT";
     public final static String EXTRA = "test.gps.connect";
     public final static String BRAKE_SWITCHER = "org.gauto.data.BRAKE_SWITCHER";
 
     private final Context context;
-    private boolean isConnected;
     private ConnectThread connectThread;                 // 监听端口
     private volatile ConnectedThread connectedThread;    // 通信
-    private int waitingTime;                            // 超时时间
     private int disconnectCount = 0;
     private String disconnectReason = "";
     private LinkedBlockingQueue<Byte> revBytes;
@@ -59,15 +59,11 @@ public class WiFiConnectService extends Service {
 
     @Override
     public void onCreate() {
-        int serverPort = 10181;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        waitingTime = Integer.valueOf(preferences.getString("tcp_waiting_time", "2500"));
-
         if (revBytes == null) {
             revBytes = MainApplication.getBytes();
         }
         if (connectThread == null) {
-            connectThread = new ConnectThread(serverPort);
+            connectThread = new ConnectThread(SERVER_PORT);
             connectThread.start();
         }
         super.onCreate();
@@ -85,7 +81,6 @@ public class WiFiConnectService extends Service {
             try {
                 temp = new ServerSocket(serverPort);
             } catch (IOException e) {
-                isConnected = false;
                 e.printStackTrace();
             }
             serverSocket = temp;
@@ -97,7 +92,7 @@ public class WiFiConnectService extends Service {
                     Log.d(TAG, "accepting");
                     socket = serverSocket.accept();
                     if (socket != null) {
-                        socket.setSoTimeout(waitingTime);
+                        socket.setSoTimeout(WAITING_TIME);
                     }
                     Log.d(TAG, "accepted");
                 } catch (InterruptedIOException e) {
@@ -116,13 +111,11 @@ public class WiFiConnectService extends Service {
                         }
                         continue;
                     } catch (Exception ex) {
-                        isConnected = false;
                         return;
                     }
                 }
                 connectedThread = new ConnectedThread(socket);
                 connectedThread.start();
-                isConnected = true;
                 Log.d(TAG, "connected");
             }
         }

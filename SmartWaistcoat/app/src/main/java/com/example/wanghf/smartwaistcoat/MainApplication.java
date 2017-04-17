@@ -3,6 +3,7 @@ package com.example.wanghf.smartwaistcoat;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
@@ -38,6 +39,10 @@ public class MainApplication extends Application {
             bytes = new LinkedBlockingQueue<>();
         }
 
+        bindService(new Intent(context, WiFiConnectService.class),
+                wiFiConnectServiceConn, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(context, DataParseService.class),
+                dataParseServiceConn, Context.BIND_AUTO_CREATE);
         super.onCreate();
     }
 
@@ -54,17 +59,6 @@ public class MainApplication extends Application {
             wiFiConnectService = null;
         }
     };
-
-    private ServiceConnection unityServerConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
-
 
     private ServiceConnection dataParseServiceConn = new ServiceConnection() {
         @Override
