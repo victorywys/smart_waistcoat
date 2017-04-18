@@ -1,6 +1,7 @@
 package com.example.wanghf.smartwaistcoat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -53,5 +54,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickShowAcceleration(View view) {
 
+    }
+
+    public void onClickSettingPersonInfo(View view) {
+        startActivity(new Intent(MainActivity.this, PersonalInfoActivity.class));
+    }
+
+    public void onClickEmergencyContact(View view) {
+        startActivity(new Intent(MainActivity.this, EmergencyContactActivity.class));
+    }
+
+    public void onClickAlarm(View view) {
+        startActivity(new Intent(MainActivity.this, AlarmActivity.class));
+    }
+
+    public void onClickDevice(View view) {
+        startActivity(new Intent(MainActivity.this, DeviceActivity.class));
     }
 }
