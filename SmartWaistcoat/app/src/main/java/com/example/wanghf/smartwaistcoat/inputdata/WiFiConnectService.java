@@ -31,7 +31,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class WiFiConnectService extends Service {
     private static final String TAG = "WiFiConnectService";
 
-    private final int WAITING_TIME = 2500;
     private final int PORT = 10181;
 
     // 广播相关
@@ -63,6 +62,7 @@ public class WiFiConnectService extends Service {
         if (revBytes == null) {
             revBytes = MainApplication.getBytes();
         }
+        SharedPreferences sharedPreferences =
         if (connectThread == null) {
             connectThread = new ConnectThread("192.168.21.3");
             connectThread.start();
@@ -84,7 +84,6 @@ public class WiFiConnectService extends Service {
         public void run() {
             while (true) {
                 try {
-                    Log.d(TAG, "accepting");
                     socket = new Socket(InetAddress.getByName(ip), PORT);
                 } catch (Exception e) {
                     try {
@@ -99,7 +98,6 @@ public class WiFiConnectService extends Service {
                 }
                 connectedThread = new ConnectedThread(socket);
                 connectedThread.start();
-                Log.d(TAG, "connected");
             }
         }
 
@@ -148,7 +146,6 @@ public class WiFiConnectService extends Service {
                 try {
                     bufferLength = inputStream.read(buffer);
                 } catch (Exception e) {
-                    disconnectReason = disconnectReason + "Exception:" + e.toString() + " ";
                     broadcastUpdate(ACTION_REASON_TYPE, disconnectReason);
                     break;
                 }
