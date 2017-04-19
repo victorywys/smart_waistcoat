@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,7 +32,7 @@ public class WiFiConnectService extends Service {
     private static final String TAG = "WiFiConnectService";
 
     private final int WAITING_TIME = 2500;
-    private final int SERVER_PORT = 10181;
+    private final int PORT = 10181;
 
     // 广播相关
     public final static String ACTION_COUNT_NUMBER = "test.gps.ACTION_COUNT_NUMBER";
@@ -63,7 +64,7 @@ public class WiFiConnectService extends Service {
             revBytes = MainApplication.getBytes();
         }
         if (connectThread == null) {
-            connectThread = new ConnectThread(SERVER_PORT);
+            connectThread = new ConnectThread("192.168.21.3");
             connectThread.start();
         }
         super.onCreate();
@@ -73,36 +74,18 @@ public class WiFiConnectService extends Service {
      * Server socket 所在线程
      */
     private class ConnectThread extends Thread {
-        private ServerSocket serverSocket;
         private Socket socket;
+        private String ip;
 
-        public ConnectThread(int serverPort) {
-            ServerSocket temp = null;
-            try {
-                temp = new ServerSocket(serverPort);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            serverSocket = temp;
+        public ConnectThread(String ip) {
+            this.ip = ip;
         }
 
         public void run() {
             while (true) {
                 try {
                     Log.d(TAG, "accepting");
-                    socket = serverSocket.accept();
-                    if (socket != null) {
-                        socket.setSoTimeout(WAITING_TIME);
-                    }
-                    Log.d(TAG, "accepted");
-                } catch (InterruptedIOException e) {
-                    Log.i(TAG, "interrupted");
-                    try {
-                        serverSocket.close();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    break;
+                    socket = new Socket(InetAddress.getByName(ip), PORT);
                 } catch (Exception e) {
                     try {
                         Log.d(TAG, "connect err");
@@ -160,7 +143,7 @@ public class WiFiConnectService extends Service {
         public void run() {
             byte[] buffer = new byte[1024];
             int bufferLength,count = 0;
-//            startHeartBeatThread();
+
             while (!interrupted()) {
                 try {
                     bufferLength = inputStream.read(buffer);
@@ -174,7 +157,7 @@ public class WiFiConnectService extends Service {
                     for (int i = 0; i<bufferLength; i++) {
                         save[i] = buffer[i];
                     }
-                    fileUtil.write2SDFromInputByte("AAB", "origin.txt", save.clone());
+                    fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
                         try {
                             revBytes.put(buffer[i]);

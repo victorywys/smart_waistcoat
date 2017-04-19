@@ -143,8 +143,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/linear_curve"
-            android:visibility="invisible">
+            android:id="@+id/linear_curve">
             <com.androidplot.xy.XYPlot
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -177,7 +176,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/relative_setting">
+            android:id="@+id/relative_setting"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -253,6 +253,7 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="onClickSettings"/>
     </LinearLayout>
 </LinearLayout>

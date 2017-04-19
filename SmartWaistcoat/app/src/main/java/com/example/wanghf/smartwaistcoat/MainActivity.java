@@ -15,7 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
     private XYPlot impulsePlot;
 
-    private boolean showingCurve;
+    private boolean showingSetting;
+    private boolean showingCurve = true;
     private MainController mainController;
     private Context context;
 
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickShowCurve(View view) {
+        if (showingSetting) {
+            showingSetting = false;
+            findViewById(R.id.relative_setting).setVisibility(View.GONE);
+        }
         if (showingCurve) {
             findViewById(R.id.linear_curve).setVisibility(View.GONE);
             findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
@@ -52,8 +57,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickShowAcceleration(View view) {
-
+    public void onClickSettings(View view) {
+        if (showingSetting) {
+            findViewById(R.id.relative_setting).setVisibility(View.GONE);
+            if (showingCurve) {
+                findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
+            }
+            else {
+                findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
+            }
+            showingSetting = false;
+        } else {
+            findViewById(R.id.relative_setting).setVisibility(View.VISIBLE);
+            if (showingCurve) {
+                findViewById(R.id.linear_curve).setVisibility(View.GONE);
+            }
+            else {
+                findViewById(R.id.linear_table).setVisibility(View.GONE);
+            }
+            showingSetting = true;
+        }
     }
 
     public void onClickSettingPersonInfo(View view) {

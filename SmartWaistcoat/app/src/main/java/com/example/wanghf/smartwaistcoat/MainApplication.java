@@ -73,6 +73,8 @@ public class MainApplication extends Application {
             dataParseService = null;
         }
     };
+
+
     public static LinkedBlockingQueue getQueue(){
         return queue;
     }
