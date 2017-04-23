@@ -18,6 +18,15 @@ public class MainController {
     private LinkedBlockingQueue queue;
     private ControllerThread controllerThread;
 
+    private boolean alarmXinlv;
+    private boolean alarmWendu;
+    private boolean alarmXueyang;
+    private boolean alarmYali;
+    private boolean alarmZukang;
+    private boolean alarmZhenling;
+    private boolean alarmDuanxin;
+    private boolean alarmDianhua;
+
     public MainController(Context context, LinkedBlockingQueue queue) {
         this.context = context;
         this.queue = queue;
@@ -44,5 +53,42 @@ public class MainController {
                 }
             }
         }
+    }
+
+    private void alarmDecision(WaistcoatData data) {
+
+    }
+
+
+    public void setAlarmDianhua(boolean alarmDianhua) {
+        this.alarmDianhua = alarmDianhua;
+    }
+
+    public void setAlarmDuanxin(boolean alarmDuanxin) {
+        this.alarmDuanxin = alarmDuanxin;
+    }
+
+    public void setAlarmWendu(boolean alarmWendu) {
+        this.alarmWendu = alarmWendu;
+    }
+
+    public void setAlarmXinlv(boolean alarmXinlv) {
+        this.alarmXinlv = alarmXinlv;
+    }
+
+    public void setAlarmYali(boolean alarmYali) {
+        this.alarmYali = alarmYali;
+    }
+
+    public void setAlarmXueyang(boolean alarmXueyang) {
+        this.alarmXueyang = alarmXueyang;
+    }
+
+    public void setAlarmZukang(boolean alarmZukang) {
+        this.alarmZukang = alarmZukang;
+    }
+
+    public void setAlarmZhenling(boolean alarmZhenling) {
+        this.alarmZhenling = alarmZhenling;
     }
 }
