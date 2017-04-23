@@ -58,8 +58,9 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/alarm_switch_xinlv"
             android:layout_marginLeft="50dp"
-            android:checked="true"/>
+            android:checked="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -88,7 +89,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:checked="true"/>
+            android:id="@+id/alarm_switch_wendu"
+            android:checked="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -116,8 +118,9 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/alarm_switch_xueyang"
             android:layout_marginLeft="50dp"
-            android:checked="true"/>
+            android:checked="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -147,7 +150,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:checked="true"/>
+            android:id="@+id/alarm_switch_yali"
+            android:checked="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -176,7 +180,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
-            android:checked="true"/>
+            android:id="@+id/alarm_switch_zukang"
+            android:checked="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -190,7 +195,8 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"/>
+            android:id="@+id/alarm_switch_zhenling"
+            android:checked="false"/>
 
         <TextView
             android:layout_width="80dp"
@@ -202,6 +208,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/alarm_switch_duanxin"
             android:checked="false"/>
     </LinearLayout>
 
@@ -217,7 +224,8 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"/>
+            android:id="@+id/alarm_switch_dianhua"
+            android:checked="false"/>
     </LinearLayout>
 
 </LinearLayout>

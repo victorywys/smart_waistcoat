@@ -32,6 +32,10 @@ public class MainController {
         this.queue = queue;
     }
 
+    public MainController() {
+
+    }
+
     public void onResume() {
         controllerThread = new ControllerThread();
         controllerThread.start();
