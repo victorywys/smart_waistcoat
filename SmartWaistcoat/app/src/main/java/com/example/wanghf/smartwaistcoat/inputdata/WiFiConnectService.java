@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -62,7 +63,6 @@ public class WiFiConnectService extends Service {
         if (revBytes == null) {
             revBytes = MainApplication.getBytes();
         }
-        SharedPreferences sharedPreferences =
         if (connectThread == null) {
             connectThread = new ConnectThread("192.168.21.3");
             connectThread.start();
