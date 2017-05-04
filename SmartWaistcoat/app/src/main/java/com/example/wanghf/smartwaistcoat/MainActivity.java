@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private XYPlot impulsePlot;
+    private XYPlot xinlvPlot;
+    private XYPlot strikePlot;
 
     private boolean showingSetting;
     private boolean showingCurve = true;
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void initPlots() {
         impulsePlot = (XYPlot) findViewById(R.id.main_plot_impulse);
+        xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
+        strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
     }
 
     public void onClickShowCurve(View view) {
