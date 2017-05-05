@@ -1,10 +1,16 @@
 package com.example.wanghf.smartwaistcoat.controller;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
+import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 
+import java.io.FileInputStream;
+import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -94,5 +100,24 @@ public class MainController {
 
     public void setAlarmZhenling(boolean alarmZhenling) {
         this.alarmZhenling = alarmZhenling;
+    }
+
+    /**
+     * 报警电话
+     */
+    private void makeCall() {
+        BroadcastUtil.makePhoneCall(context);
+    }
+
+    private Properties loadConfig(Context context, String file) {
+        Properties properties = new Properties();
+        try {
+            FileInputStream s = new FileInputStream(file);
+            properties.load(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return properties;
     }
 }
