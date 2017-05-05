@@ -3,6 +3,7 @@ package com.example.wanghf.smartwaistcoat;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -53,5 +54,9 @@ public class AlarmActivity extends Activity {
                 }
             }
         });
+    }
+
+    public void onClickBack(View view) {
+        finish();
     }
 }

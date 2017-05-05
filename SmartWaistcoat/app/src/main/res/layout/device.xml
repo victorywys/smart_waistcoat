@@ -5,7 +5,8 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:onClick="onClickBack"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,6 +26,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/device_text_wifi_name"
             android:textSize="22sp"
             android:text="wifi"/>
     </LinearLayout>
@@ -41,6 +43,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/device_text_wifi_password"
             android:textSize="22sp"
             android:text="pswd"/>
     </LinearLayout>
@@ -57,6 +60,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/device_text_ip_address"
             android:textSize="22sp"
             android:text="127.0.0.1"/>
     </LinearLayout>
@@ -73,7 +77,17 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/device_text_port"
             android:textSize="22sp"
             android:text="8089"/>
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="50dp"
+        android:text="保存更改"
+        android:textSize="24sp"
+        android:onClick="onClickSaveUpdate"/>
 </LinearLayout>

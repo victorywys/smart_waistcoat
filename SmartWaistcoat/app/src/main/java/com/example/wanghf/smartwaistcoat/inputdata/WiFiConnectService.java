@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -15,6 +16,8 @@ import android.util.Log;
 import com.example.wanghf.smartwaistcoat.MainApplication;
 import com.example.wanghf.smartwaistcoat.utils.FileUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -32,7 +35,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class WiFiConnectService extends Service {
     private static final String TAG = "WiFiConnectService";
 
-    private final int PORT = 10181;
+    private int PORT = 10181;
+    private String IP = "192.168.21.3";
 
     // 广播相关
     public final static String ACTION_COUNT_NUMBER = "test.gps.ACTION_COUNT_NUMBER";
@@ -63,11 +67,30 @@ public class WiFiConnectService extends Service {
         if (revBytes == null) {
             revBytes = MainApplication.getBytes();
         }
+
+        initConnectInfo();
+
         if (connectThread == null) {
-            connectThread = new ConnectThread("192.168.21.3");
+            connectThread = new ConnectThread();
             connectThread.start();
         }
         super.onCreate();
+    }
+
+    /**
+     * 初始化ip和端口
+     */
+    private void initConnectInfo() {
+        Properties properties = new Properties();
+        String file = Environment.getExternalStorageDirectory() + "/AAA/device.properties";
+        try {
+            FileInputStream s = new FileInputStream(file);
+            properties.load(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        IP = properties.get("IP").toString();
+        PORT = Integer.parseInt(properties.get("PORT").toString());
     }
 
     /**
@@ -75,16 +98,11 @@ public class WiFiConnectService extends Service {
      */
     private class ConnectThread extends Thread {
         private Socket socket;
-        private String ip;
-
-        public ConnectThread(String ip) {
-            this.ip = ip;
-        }
 
         public void run() {
             while (true) {
                 try {
-                    socket = new Socket(InetAddress.getByName(ip), PORT);
+                    socket = new Socket(InetAddress.getByName(IP), PORT);
                 } catch (Exception e) {
                     try {
                         Log.d(TAG, "connect err");

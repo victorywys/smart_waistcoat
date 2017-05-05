@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean showingSetting;
     private boolean showingCurve = true;
+    private boolean showingSource;
     private MainController mainController;
     private Context context;
 
@@ -97,5 +98,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickDevice(View view) {
         startActivity(new Intent(MainActivity.this, DeviceActivity.class));
+    }
+
+    public void onClickChangeMode(View view) {
+        if (showingSetting) {
+            showingSetting = false;
+            findViewById(R.id.relative_setting).setVisibility(View.GONE);
+        }
+        if (showingCurve) {
+            findViewById(R.id.linear_curve).setVisibility(View.GONE);
+            findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
+            showingCurve = false;
+        }
+        else {
+            findViewById(R.id.linear_table).setVisibility(View.GONE);
+            findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
+            showingCurve = true;
+        }
     }
 }
