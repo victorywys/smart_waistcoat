@@ -94,6 +94,21 @@ public class ByteUtil {
     public static byte[] getBytes(String data) {
         return getBytes(data, "GBK");
     }
+
+    public static byte[] hex2byte(String hex) {
+        String digital = "0123456789ABCDEF";
+        String hex1 = hex.replace(" ", "");
+        char[] hex2char = hex1.toCharArray();
+        byte[] bytes = new byte[hex1.length() / 2];
+        byte temp;
+        for (int p = 0; p < bytes.length; p++) {
+            temp = (byte) (digital.indexOf(hex2char[2 * p]) * 16);
+            temp += digital.indexOf(hex2char[2 * p + 1]);
+            bytes[p] = (byte) (temp & 0xff);
+        }
+        return bytes;
+    }
+
     public static byte[] append(byte[] org, byte[] to) {
 
         byte[] newByte = new byte[org.length + to.length];

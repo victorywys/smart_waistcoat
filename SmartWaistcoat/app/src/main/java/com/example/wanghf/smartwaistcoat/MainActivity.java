@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initConfig() {
-        Properties prop = loadConfig(context, Environment.getExternalStorageDirectory() + "/AAA/device.properties");
+        Properties prop = loadConfig(context, Environment.getExternalStorageDirectory() + "/AAA/contact.properties");
         if (prop != null) {
             callNumber = prop.get("CALL").toString();
             msgNumber1 = prop.get("MSG1").toString();
@@ -143,19 +143,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickChangeMode(View view) {
-        if (showingSetting) {
-            showingSetting = false;
-            findViewById(R.id.relative_setting).setVisibility(View.GONE);
-        }
-        if (showingCurve) {
-            findViewById(R.id.linear_curve).setVisibility(View.GONE);
-            findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
-            showingCurve = false;
-        } else {
-            findViewById(R.id.linear_table).setVisibility(View.GONE);
-            findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
-            showingCurve = true;
-        }
+        BroadcastUtil.changeDataSource(context, 1);
+//        if (showingSetting) {
+//            showingSetting = false;
+//            findViewById(R.id.relative_setting).setVisibility(View.GONE);
+//        }
+//        if (showingCurve) {
+//            findViewById(R.id.linear_curve).setVisibility(View.GONE);
+//            findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
+//            showingCurve = false;
+//        } else {
+//            findViewById(R.id.linear_table).setVisibility(View.GONE);
+//            findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
+//            showingCurve = true;
+//        }
     }
 
     /**

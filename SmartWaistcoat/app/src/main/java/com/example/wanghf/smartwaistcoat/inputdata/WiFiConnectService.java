@@ -5,25 +5,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.wanghf.smartwaistcoat.MainApplication;
+import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
+import com.example.wanghf.smartwaistcoat.utils.ByteUtil;
 import com.example.wanghf.smartwaistcoat.utils.FileUtil;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -39,11 +36,9 @@ public class WiFiConnectService extends Service {
     private String IP = "192.168.21.3";
 
     // 广播相关
-    public final static String ACTION_COUNT_NUMBER = "test.gps.ACTION_COUNT_NUMBER";
     public final static String ACTION_DISCONNECT_NUMBER = "test.gps.DISCONNECT_NUMBER";
     public final static String ACTION_REASON_TYPE = "test.gps.ACTION_REASON_TYPE";
     public final static String EXTRA = "test.gps.connect";
-    public final static String BRAKE_SWITCHER = "org.gauto.data.BRAKE_SWITCHER";
 
     private final Context context;
     private ConnectThread connectThread;                 // 监听端口
@@ -152,19 +147,18 @@ public class WiFiConnectService extends Service {
                 inputStream = socket.getInputStream();
                 outputStream = socket.getOutputStream();
             } catch (Exception ignore) {}
-            IntentFilter intentFilter = new IntentFilter(BRAKE_SWITCHER);
-            LocalBroadcastManager.getInstance(context).registerReceiver(brakeListener,intentFilter);
+            IntentFilter intentFilter = new IntentFilter(BroadcastUtil.ACTION_CHANGE_DATA_SOURCE);
+            LocalBroadcastManager.getInstance(context).registerReceiver(instructionListener,intentFilter);
         }
 
         public void run() {
             byte[] buffer = new byte[1024];
-            int bufferLength,count = 0;
+            int bufferLength;
 
             while (!interrupted()) {
                 try {
                     bufferLength = inputStream.read(buffer);
                 } catch (Exception e) {
-                    broadcastUpdate(ACTION_REASON_TYPE, disconnectReason);
                     break;
                 }
                 if (bufferLength > 0) {
@@ -172,11 +166,11 @@ public class WiFiConnectService extends Service {
                     for (int i = 0; i<bufferLength; i++) {
                         save[i] = buffer[i];
                     }
+                    Log.i(TAG, new String(buffer, 0, bufferLength));
                     fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
                         try {
                             revBytes.put(buffer[i]);
-                            broadcastUpdateInt(ACTION_COUNT_NUMBER, ++count);
                         } catch (Exception e) {
                             Log.i(TAG, "InterruptedException");
                         }
@@ -244,7 +238,8 @@ public class WiFiConnectService extends Service {
          */
         private synchronized void outWrite(String data) {
             try {
-                outputStream.write(data.getBytes());
+                outputStream.write(ByteUtil.hex2byte(data));
+                outputStream.write(" ".getBytes());
                 Log.i(TAG, data);
             } catch (Exception e) {
                 Log.i(TAG,"heartBeat outWrite Exception");
@@ -272,22 +267,24 @@ public class WiFiConnectService extends Service {
             if (revBytes != null) {
                 revBytes.clear();
             }
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(brakeListener);
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(instructionListener);
         }
 
         /**
-         * 刹车指令广播
+         *
          */
-        private BroadcastReceiver brakeListener = new BroadcastReceiver() {
+        private BroadcastReceiver instructionListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(BRAKE_SWITCHER)) {
-                    boolean switcher = intent.getBooleanExtra("BRAKE", true);
-                    if (switcher) {
-                        outWrite("%BRAKE ON");
-                    } else {
-                        outWrite("%BRAKE OFF");
-                    }
+                if (intent.getAction().equals(BroadcastUtil.ACTION_CHANGE_DATA_SOURCE)) {
+//                    boolean switcher = intent.getBooleanExtra("BRAKE", true);
+//                    String out = String.valueOf(0x58) + " " + String.valueOf(0x81) + " " +
+//                            String.valueOf(0x0d) + " " + String.valueOf(0x0a);
+                    String out = "0x58 0x81 0x0d 0x0a";
+                    outWrite(out);
+//                    outWrite("0x81");
+//                    outWrite("0x0d");
+//                    outWrite("0x0a");
                 }
             }
         };
