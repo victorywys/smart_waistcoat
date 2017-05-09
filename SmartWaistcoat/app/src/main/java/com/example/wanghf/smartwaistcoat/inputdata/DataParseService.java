@@ -60,16 +60,16 @@ public class DataParseService extends Service {
         super.onCreate();
     }
     private class TranslateThread extends Thread {
-        private int count = 0;
         private final int noneHead = 0;
         private final int gpsState = 1;
         private final int navState = 2;
+        private final int gsensState = 3;
         private int gpsCount = 0;
         private int navCount = 0;
         private int state = noneHead;
         private byte[] gpsItem = new byte[512];
         private byte[] navItem = new byte[128];
-        private byte[] dataHead = ByteUtil.getBytes("GPT");
+        private byte gsensHead = (byte) 0x05;
         private byte[] navHead = ByteUtil.getBytes("NAV");
 
         public void run() {
@@ -78,17 +78,10 @@ public class DataParseService extends Service {
                     case noneHead:
                         try {
                             byte head = bytes.poll(2500, TimeUnit.MILLISECONDS);
-                            if (head == 0x24) {
+                            if (head == 0x5) {
                                 byte head1 = bytes.poll(2500, TimeUnit.MILLISECONDS);
                                 byte head2 = bytes.poll(2500, TimeUnit.MILLISECONDS);
                                 byte head3 = bytes.poll(2500, TimeUnit.MILLISECONDS);
-                                if (head1 == dataHead[0] && head2 == dataHead[1] && head3 == dataHead[2]) {
-                                    state = gpsState;
-                                    gpsCount = 0;
-                                } else if (head1 == navHead[0] && head2 == navHead[1] && head3 == navHead[2]) {
-                                    state = navState;
-                                    navCount = 0;
-                                }
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "bytes is empty");

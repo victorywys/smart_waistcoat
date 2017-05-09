@@ -16,6 +16,7 @@ import android.telephony.PhoneNumberUtils;
 import android.view.View;
 import android.view.Window;
 
+import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
@@ -27,9 +28,13 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    private static final int HISTORY_SIZE = 1000;
+
+    // 画曲线相关
     private XYPlot impulsePlot;
     private XYPlot xinlvPlot;
     private XYPlot strikePlot;
+    private SimpleXYSeries impulseSeries;
 
     private String callNumber = "";
     private String msgNumber1 = "";
@@ -38,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean showingSetting;
     private boolean showingCurve = true;
-    private boolean showingSource;
+    private boolean showingSource;                    ///选择数据源
     private MainController mainController;
     private Context context;
 
@@ -78,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
         impulsePlot = (XYPlot) findViewById(R.id.main_plot_impulse);
         xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
         strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
+
+        impulseSeries = new SimpleXYSeries("impulse");
+        impulseSeries.useImplicitXVals();
+
     }
 
     private void initConfig() {

@@ -166,21 +166,14 @@ public class WiFiConnectService extends Service {
                     for (int i = 0; i<bufferLength; i++) {
                         save[i] = buffer[i];
                     }
-                    Log.i(TAG, new String(buffer, 0, bufferLength));
                     fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
-                        try {
-                            revBytes.put(buffer[i]);
-                        } catch (Exception e) {
+                            try {
+                                revBytes.put(buffer[i]);
+                            } catch (Exception e) {
                             Log.i(TAG, "InterruptedException");
                         }
                     }
-                }
-                if (bufferLength == -1) {
-                    Log.d(TAG, "return -1");
-                    disconnectReason = disconnectReason + "return -1  ";
-                    broadcastUpdate(ACTION_REASON_TYPE,disconnectReason);
-                    break;
                 }
             }
             broadcastUpdateInt(ACTION_DISCONNECT_NUMBER, ++disconnectCount);
@@ -238,8 +231,12 @@ public class WiFiConnectService extends Service {
          */
         private synchronized void outWrite(String data) {
             try {
-                outputStream.write(ByteUtil.hex2byte(data));
-                outputStream.write(" ".getBytes());
+                byte[] bytes = new byte[4];
+                bytes[0] = (byte) 0x58;
+                bytes[1] = (byte) 0x81;
+                bytes[2] = (byte) 0x0d;
+                bytes[3] = (byte) 0x0a;
+                outputStream.write(bytes);
                 Log.i(TAG, data);
             } catch (Exception e) {
                 Log.i(TAG,"heartBeat outWrite Exception");

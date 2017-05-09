@@ -14,6 +14,7 @@ public abstract class BroadcastUtil {
     public static final String ACTION_PHONE_CALL = "com.example.PHONE_CALL";
     public static final String ACTION_SEND_MESSAGE = "com.example.SEND_MESSAGE";
     public static final String ACTION_CHANGE_DATA_SOURCE = "com.example.CHANGE_DATA_SOURCE";
+    public static final String ACTION_IMPULSE_UPDATE = "com.example.IMPULSE_UPDATE";
 
     private BroadcastUtil() {
         throw new AssertionError();
@@ -27,6 +28,12 @@ public abstract class BroadcastUtil {
     public static void changeDataSource(Context context, int id) {
         Intent intent = new Intent(ACTION_CHANGE_DATA_SOURCE);
         intent.putExtra("ID", id);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void updateImpulse(Context context, int value) {
+        Intent intent = new Intent(ACTION_IMPULSE_UPDATE);
+        intent.putExtra("IMPULSE", value);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
