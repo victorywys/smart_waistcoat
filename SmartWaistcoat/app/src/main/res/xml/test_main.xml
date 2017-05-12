@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="设备信息">
+        <EditTextPreference
+            android:key="wifi_name"
+            android:title="wifi名称"
+            android:summary="未知"
+            android:dialogTitle="设置wifi名称" />
+        <EditTextPreference
+            android:key="wifi_password"
+            android:title="wifi密码"
+            android:summary="未知"
+            android:dialogTitle="设置wifi密码"/>
+        <EditTextPreference
+            android:key="device_ip"
+            android:title="设备IP"
+            android:summary="未知"
+            android:dialogTitle="设置设备IP"/>
+        <EditTextPreference
+            android:key="device_port"
+            android:title="设备端口"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置设备端口"/>
+        <EditTextPreference
+            android:key="source_id"
+            android:title="数据源编号"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置数据编号"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="个人信息">
+        <EditTextPreference
+            android:key="user_name"
+            android:title="用户姓名"
+            android:summary="未知"
+            android:dialogTitle="设置用户姓名"/>
+        <SwitchPreference
+            android:key="user_gender"
+            android:title="用户性别"
+            android:defaultValue="true"
+            android:summary="男"/>
+        <EditTextPreference
+            android:key="user_age"
+            android:title="用户年龄"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置用户年龄"/>
+        <EditTextPreference
+            android:key="user_number"
+            android:title="用户病历号"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置用户病历号"/>
+        <EditTextPreference
+            android:key="user_history"
+            android:title="用户病例史"
+            android:summary="未知"
+            android:dialogTitle="添加病例史"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="紧急联系方式">
+        <EditTextPreference
+            android:key="contact_call"
+            android:summary="未知"
+            android:title="电话联系"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置紧急电话"/>
+
+        <EditTextPreference
+            android:key="contact_msg1"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:title="短信联系"
+            android:dialogTitle="设置紧急短息"/>
+        <EditTextPreference
+            android:dialogTitle="设置紧急短息"
+            android:key="contact_msg2"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:title="短信联系" />
+        <EditTextPreference
+            android:key="contact_msg3"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:title="短信联系"
+            android:dialogTitle="设置紧急短息"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="报警条件">
+
+    </PreferenceCategory>
+</PreferenceScreen>

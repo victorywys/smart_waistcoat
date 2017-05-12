@@ -8,8 +8,13 @@ import java.io.Serializable;
 
 public class WaistcoatData implements Serializable, Cloneable {
     @Override
-    protected WaistcoatData clone() throws CloneNotSupportedException {
-        return (WaistcoatData) super.clone();
+    protected WaistcoatData clone() {
+        try {
+            return (WaistcoatData) super.clone();
+        }
+        catch (Exception e) {
+            return new WaistcoatData();
+        }
     }
 
     private double xinlv;
@@ -17,11 +22,7 @@ public class WaistcoatData implements Serializable, Cloneable {
     private double wendu;
     private double yali;
     private double xueyang;
-    private double maibo;
-    private double jiasuduX;
-    private double jiasuduY;
-    private double jiasuduZ;
-
+    private double dianliang;
 
     public double getXinlv() {
         return xinlv;
@@ -63,35 +64,11 @@ public class WaistcoatData implements Serializable, Cloneable {
         this.xueyang = xueyang;
     }
 
-    public double getMaibo() {
-        return maibo;
+    public double getDianliang() {
+        return dianliang;
     }
 
-    public void setMaibo(double maibo) {
-        this.maibo = maibo;
-    }
-
-    public double getJiasuduX() {
-        return jiasuduX;
-    }
-
-    public void setJiasuduX(double jiasuduX) {
-        this.jiasuduX = jiasuduX;
-    }
-
-    public double getJiasuduY() {
-        return jiasuduY;
-    }
-
-    public void setJiasuduY(double jiasuduY) {
-        this.jiasuduY = jiasuduY;
-    }
-
-    public double getJiasuduZ() {
-        return jiasuduZ;
-    }
-
-    public void setJiasuduZ(double jiasuduZ) {
-        this.jiasuduZ = jiasuduZ;
+    public void setDianliang(double dianliang) {
+        this.dianliang = dianliang;
     }
 }

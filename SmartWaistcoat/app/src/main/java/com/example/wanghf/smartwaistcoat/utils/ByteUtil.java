@@ -13,7 +13,7 @@ public class ByteUtil {
         return Float.intBitsToFloat(getInt2(bytes));
     }
     public int getInt1(byte bytes){
-        return (0xff & bytes);
+        return (127 & bytes);
     }
     public float getFloat1(byte bytes){
         return Float.intBitsToFloat(getInt1(bytes));

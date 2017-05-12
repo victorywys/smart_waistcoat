@@ -49,9 +49,7 @@ public class AlarmActivity extends Activity {
         switchXinlv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
 
-                }
             }
         });
     }

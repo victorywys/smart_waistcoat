@@ -6,7 +6,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onClickBack"/>
+        android:onClick="onClickBack"
+        android:background="@drawable/back"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,6 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:lines="1"
+            android:inputType="numberDecimal"
             android:text="40"/>
 
         <EditText
@@ -53,6 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
             android:text="120"
+            android:inputType="numberDecimal"
+            android:lines="1"
             android:textSize="20sp"/>
 
         <Switch
@@ -76,12 +81,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:lines="1"
+            android:inputType="numberDecimal"
             android:text="10"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
+            android:inputType="numberDecimal"
+            android:lines="1"
             android:text="40"
             android:textSize="20sp"/>
 
@@ -106,13 +115,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:inputType="numberDecimal"
+            android:lines="1"
             android:text="80"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
-            android:inputType="none"
+            android:inputType="numberDecimal"
+            android:lines="1"
             android:textSize="20sp"/>
 
         <Switch
@@ -167,6 +179,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:lines="1"
+            android:inputType="numberDecimal"
             android:text="80"/>
 
         <EditText
@@ -227,5 +241,11 @@
             android:id="@+id/alarm_switch_dianhua"
             android:checked="false"/>
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="保存更改"/>
 
 </LinearLayout>

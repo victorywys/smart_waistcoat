@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6">
+        android:layout_weight="8">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,6 +40,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_xinlv"
                         android:text="心率"
+                        android:textColor="@color/off_white"
                         android:gravity="center"/>
 
                     <TextView
@@ -56,6 +57,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_wendu"
                         android:text="温度"
+                        android:textColor="@color/off_white"
                         android:gravity="center"/>
 
                     <TextView
@@ -72,6 +74,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_yali"
                         android:text="压力"
+                        android:textColor="@color/off_white"
                         android:gravity="center"/>
 
                     <TextView
@@ -96,6 +99,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_xueyangzhi"
                         android:text="血氧值"
+                        android:textColor="@color/off_white"
                         android:gravity="center"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -110,6 +114,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_zukang"
                         android:text="阻抗"
+                        android:textColor="@color/off_white"
                         android:gravity="center"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -124,6 +129,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_dianliang"
                         android:text="电量"
+                        android:textColor="@color/off_white"
                         android:gravity="center"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -148,12 +154,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_margin="0dp"
-                ap:renderMode="use_background_thread"
-                ap:domainTitle="Domain"
-                ap:rangeTitle="Range"
-                androidPlot.backgroundPaint.color="#000000"
-                androidPlot.borderPaint.color="#000000"
                 android:id="@+id/main_plot_ecg"
                 style="@style/APDefacto.Dark"/>
 
@@ -162,53 +162,16 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 style="@style/APDefacto.Dark"
-                android:id="@+id/main_plot_impulse"
-                ap:title="impulse"/>
+                android:id="@+id/main_plot_impulse" />
 
             <com.androidplot.xy.XYPlot
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                ap:titleTextSize="0sp"
                 android:id="@+id/main_plot_strike"
-                style="@style/APDefacto.Light"/>
+                style="@style/APDefacto.Dark"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/linear_mode"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="加速度X"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onClickJiasudu"/>
-
-        </LinearLayout>
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:visibility="gone">
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="组合一"/>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="组合二"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="确定"/>
-        </RadioGroup>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -270,10 +233,15 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/button_source"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="onClickChangeMode"/>
+            android:textSize="22sp"
+            android:background="@color/ap_gray"
+            android:onClick="onClickShowTable"
+            android:text="显示数据" />
+
         <TextView
             android:layout_width="1dp"
             android:layout_height="match_parent"
@@ -282,6 +250,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/button_switch_display"
+            android:text="开始上传"
+            android:textSize="22sp"
             android:layout_weight="1"
             android:onClick="onClickShowCurve"/>
         <TextView
@@ -291,6 +261,10 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:id="@+id/button_setting"
+            android:text="设置"
+            android:textSize="22sp"
+            android:background="@color/ap_gray"
             android:layout_weight="1"
             android:onClick="onClickSettings"/>
     </LinearLayout>

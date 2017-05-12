@@ -5,47 +5,69 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.androidplot.Plot;
+import com.androidplot.util.PlotStatistics;
+import com.androidplot.util.Redrawer;
+import com.androidplot.xy.BoundaryMode;
+import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.StepMode;
 import com.androidplot.xy.XYPlot;
 import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
+import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private static final int HISTORY_SIZE = 1000;
+    private static final int HISTORY_SIZE = 50;
 
     // 画曲线相关
     private XYPlot impulsePlot;
     private XYPlot xinlvPlot;
     private XYPlot strikePlot;
     private SimpleXYSeries impulseSeries;
+    private SimpleXYSeries ecgSeries;
+    private SimpleXYSeries strikeSeries;
+
+    private TextView textViewDianliang;
+    private TextView textViewxueyang;
+    private TextView textViewWendu;
+    private Button buttonDisplayCurve;
+    private Button buttonDisplayTable;
 
     private String callNumber = "";
     private String msgNumber1 = "";
     private String msgNumber2 = "";
     private String msgNumber3 = "";
 
-    private boolean showingSetting;
-    private boolean showingCurve = true;
-    private boolean showingSource;                    ///选择数据源
+    private boolean showingCurve;
+    private boolean showingTable;
     private MainController mainController;
     private Context context;
+
+    private Redrawer redrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
         mainController = new MainController(context, MainApplication.getQueue());
 
         initPlots();
-
-        initConfig();
     }
 
     @Override
@@ -66,9 +86,15 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mainController.onResume();
 
+        redrawer.start();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
         intentFilter.addAction(BroadcastUtil.ACTION_SEND_MESSAGE);
+        intentFilter.addAction(BroadcastUtil.ACTION_TABLES_UPDATE);
+        intentFilter.addAction(BroadcastUtil.ACTION_ECG_UPDATE);
+        intentFilter.addAction(BroadcastUtil.ACTION_STRIKE_UPDATE);
+        intentFilter.addAction(BroadcastUtil.ACTION_IMPEDANCE_UPDATE);
         LocalBroadcastManager.getInstance(context).registerReceiver(myReceiver, intentFilter);
     }
 
@@ -76,7 +102,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
+        redrawer.pause();
+
         LocalBroadcastManager.getInstance(context).unregisterReceiver(myReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        redrawer.finish();
     }
 
     private void initPlots() {
@@ -84,88 +118,146 @@ public class MainActivity extends AppCompatActivity {
         xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
         strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
 
-        impulseSeries = new SimpleXYSeries("impulse");
+        ecgSeries = new SimpleXYSeries("ECG");
+        ecgSeries.useImplicitXVals();
+        impulseSeries = new SimpleXYSeries("SPO2");
         impulseSeries.useImplicitXVals();
+        strikeSeries = new SimpleXYSeries("GST-X");
+        strikeSeries.useImplicitXVals();
 
+        xinlvPlot.addSeries(ecgSeries, new LineAndPointFormatter(
+                Color.rgb(200, 100, 100), null, null, null));
+        impulsePlot.addSeries(impulseSeries, new LineAndPointFormatter(
+                Color.rgb(100, 100, 200), null, null, null));
+        strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
+                Color.rgb(150, 200, 100), null, null, null));
+//        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
+//        xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
+//        xinlvPlot.setDomainStepValue(HISTORY_SIZE / 10);
+
+//        impulsePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.GROW);
+//        strikePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
+//        strikePlot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1000 / 10);
+
+        final PlotStatistics histStats = new PlotStatistics(1000, false);
+
+        impulsePlot.addListener(histStats);
+        xinlvPlot.addListener(histStats);
+        strikePlot.addListener(histStats);
+
+        redrawer = new Redrawer(
+                Arrays.asList(new Plot[]{impulsePlot, strikePlot, xinlvPlot}),
+                100, false);
+
+        // 按钮
+        buttonDisplayCurve = (Button) findViewById(R.id.button_switch_display);
+        buttonDisplayTable = (Button) findViewById(R.id.button_source);
+        buttonDisplayCurve.setBackgroundColor(Color.DKGRAY);
+
+        textViewDianliang = (TextView) findViewById(R.id.text_num_dianliang);
+        textViewWendu = (TextView) findViewById(R.id.text_num_wendu);
+        textViewxueyang = (TextView) findViewById(R.id.text_num_xueyangzhi);
     }
 
-    private void initConfig() {
-        Properties prop = loadConfig(context, Environment.getExternalStorageDirectory() + "/AAA/contact.properties");
-        if (prop != null) {
-            callNumber = prop.get("CALL").toString();
-            msgNumber1 = prop.get("MSG1").toString();
-            msgNumber2 = prop.get("MSG2").toString();
-            msgNumber3 = prop.get("MSG3").toString();
-        }
-    }
-
+    /**
+     * 切换曲线和表格
+     */
     public void onClickShowCurve(View view) {
-        if (showingSetting) {
-            showingSetting = false;
-            findViewById(R.id.relative_setting).setVisibility(View.GONE);
+        findViewById(R.id.linear_table).setVisibility(View.GONE);
+        findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
+        buttonDisplayCurve.setBackgroundColor(Color.DKGRAY);
+        buttonDisplayTable.setBackgroundColor(Color.GRAY);
+
+        if (!buttonDisplayTable.getText().equals("显示数据")) {
+            buttonDisplayCurve.setText("开始上传");
+            buttonDisplayTable.setText("显示数据");
+            return;
         }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int id = Integer.parseInt(sharedPreferences.getString("source_id", "1"));
+        // 停止数据
+        if (showingTable) {
+            BroadcastUtil.stopData(context, id);
+            showingTable = false;
+        }
+
+        // 正在显示，停止数据
         if (showingCurve) {
-            findViewById(R.id.linear_curve).setVisibility(View.GONE);
-            findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
+            buttonDisplayCurve.setText("开始上传");
             showingCurve = false;
+            BroadcastUtil.stopData(context, id);
         } else {
-            findViewById(R.id.linear_table).setVisibility(View.GONE);
-            findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
+            buttonDisplayCurve.setText("停止上传");
             showingCurve = true;
+            BroadcastUtil.receiveData(context, id);
         }
     }
 
-    public void onClickSettings(View view) {
-        if (showingSetting) {
-            findViewById(R.id.relative_setting).setVisibility(View.GONE);
-            if (showingCurve) {
-                findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
-            } else {
-                findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
-            }
-            showingSetting = false;
+    public void onClickShowTable(View view) {
+        findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
+        findViewById(R.id.linear_curve).setVisibility(View.GONE);
+        buttonDisplayTable.setBackgroundColor(Color.DKGRAY);
+        buttonDisplayCurve.setBackgroundColor(Color.GRAY);
+
+        if (!buttonDisplayCurve.getText().equals("显示曲线")) {
+            buttonDisplayTable.setText("开始上传");
+            buttonDisplayCurve.setText("显示曲线");
+            return;
+        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int id = Integer.parseInt(sharedPreferences.getString("source_id", "1"));
+
+        // 停止
+        if (showingCurve) {
+            BroadcastUtil.stopData(context, id);
+            showingCurve = false;
+        }
+
+        if (showingTable) {
+            buttonDisplayTable.setText("开始上传");
+            showingTable = false;
+            BroadcastUtil.stopData(context, id);
         } else {
-            findViewById(R.id.relative_setting).setVisibility(View.VISIBLE);
-            if (showingCurve) {
-                findViewById(R.id.linear_curve).setVisibility(View.GONE);
-            } else {
-                findViewById(R.id.linear_table).setVisibility(View.GONE);
-            }
-            showingSetting = true;
+            buttonDisplayTable.setText("停止上传");
+            showingTable = true;
+            BroadcastUtil.receiveData(context, id);
         }
     }
 
+    /**
+     * 设置
+     */
+    public void onClickSettings(View view) {
+        Intent intent = new Intent(context, TestMainActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * 个人信息
+     */
     public void onClickSettingPersonInfo(View view) {
         startActivity(new Intent(MainActivity.this, PersonalInfoActivity.class));
     }
 
+    /**
+     * 紧急通信
+     */
     public void onClickEmergencyContact(View view) {
         startActivity(new Intent(MainActivity.this, EmergencyContactActivity.class));
     }
 
+    /**
+     * 设置报警信息
+     */
     public void onClickAlarm(View view) {
         startActivity(new Intent(MainActivity.this, AlarmActivity.class));
     }
 
+    /**
+     * 设备信息
+     */
     public void onClickDevice(View view) {
         startActivity(new Intent(MainActivity.this, DeviceActivity.class));
-    }
-
-    public void onClickChangeMode(View view) {
-        BroadcastUtil.changeDataSource(context, 1);
-//        if (showingSetting) {
-//            showingSetting = false;
-//            findViewById(R.id.relative_setting).setVisibility(View.GONE);
-//        }
-//        if (showingCurve) {
-//            findViewById(R.id.linear_curve).setVisibility(View.GONE);
-//            findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
-//            showingCurve = false;
-//        } else {
-//            findViewById(R.id.linear_table).setVisibility(View.GONE);
-//            findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
-//            showingCurve = true;
-//        }
     }
 
     /**
@@ -183,6 +275,52 @@ public class MainActivity extends AppCompatActivity {
                 doSendSMSTo(msgNumber1);
                 doSendSMSTo(msgNumber2);
                 doSendSMSTo(msgNumber3);
+            }
+
+            if (action.equals(BroadcastUtil.ACTION_TABLES_UPDATE)) {
+                WaistcoatData waistcoatData = (WaistcoatData) intent.getSerializableExtra("TABLES");
+                textViewWendu.setText(waistcoatData.getWendu() + "");
+                textViewxueyang.setText(waistcoatData.getXueyang() + "");
+                textViewDianliang.setText(waistcoatData.getDianliang() + "");
+                Log.i(TAG, "tables");
+            }
+
+            if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
+                int data = intent.getIntExtra("ECG", 0);
+
+                if (ecgSeries.size() > HISTORY_SIZE) {
+                    ecgSeries.removeFirst();
+                }
+
+                ecgSeries.addLast(null, data);
+
+                Log.i(TAG, "ecg" + data);
+            }
+
+            if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
+                int data = intent.getIntExtra("STRIKE", 0);
+
+                if (strikeSeries.size() > HISTORY_SIZE) {
+                    strikeSeries.removeFirst();
+                }
+
+                strikeSeries.addLast(null, data);
+
+                strikeSeries.setTitle("GST-X");
+                Log.i(TAG, "strike" + data);
+            }
+
+            if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
+                int data = intent.getIntExtra("IMPEDANCE", 0);
+
+                if (impulseSeries.size() > HISTORY_SIZE) {
+                    impulseSeries.removeFirst();
+                }
+
+                impulseSeries.addLast(null, data);
+                impulseSeries.setTitle("阻抗");
+
+                Log.i(TAG, "impedance" + data);
             }
         }
     };
@@ -217,17 +355,4 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-    private Properties loadConfig(Context context, String file) {
-        Properties properties = new Properties();
-        try {
-            FileInputStream s = new FileInputStream(file);
-            properties.load(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return properties;
-    }
-
 }

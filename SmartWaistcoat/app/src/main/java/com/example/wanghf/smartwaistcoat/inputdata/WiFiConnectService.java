@@ -5,9 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -35,16 +37,9 @@ public class WiFiConnectService extends Service {
     private int PORT = 10181;
     private String IP = "192.168.21.3";
 
-    // 广播相关
-    public final static String ACTION_DISCONNECT_NUMBER = "test.gps.DISCONNECT_NUMBER";
-    public final static String ACTION_REASON_TYPE = "test.gps.ACTION_REASON_TYPE";
-    public final static String EXTRA = "test.gps.connect";
-
     private final Context context;
     private ConnectThread connectThread;                 // 监听端口
     private volatile ConnectedThread connectedThread;    // 通信
-    private int disconnectCount = 0;
-    private String disconnectReason = "";
     private LinkedBlockingQueue<Byte> revBytes;
     private FileUtil fileUtil = new FileUtil();
 
@@ -76,16 +71,9 @@ public class WiFiConnectService extends Service {
      * 初始化ip和端口
      */
     private void initConnectInfo() {
-        Properties properties = new Properties();
-        String file = Environment.getExternalStorageDirectory() + "/AAA/device.properties";
-        try {
-            FileInputStream s = new FileInputStream(file);
-            properties.load(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        IP = properties.get("IP").toString();
-        PORT = Integer.parseInt(properties.get("PORT").toString());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        IP = sharedPreferences.getString("device_ip", "127.0.0.1");
+        PORT = Integer.parseInt(sharedPreferences.getString("device_port", "8899"));
     }
 
     /**
@@ -100,7 +88,7 @@ public class WiFiConnectService extends Service {
                     socket = new Socket(InetAddress.getByName(IP), PORT);
                 } catch (Exception e) {
                     try {
-                        Log.d(TAG, "connect err");
+//                        Log.d(TAG, "connect err");
                         if (socket != null) {
                             socket.close();
                         }
@@ -115,7 +103,7 @@ public class WiFiConnectService extends Service {
         }
 
         void cancel() {
-            Log.d(TAG, "connectedthread is canceled");
+            Log.d(TAG, "connectedthread is canceled12333");
             if (socket != null) {
                 try {
                     socket.close();
@@ -146,8 +134,11 @@ public class WiFiConnectService extends Service {
             try {
                 inputStream = socket.getInputStream();
                 outputStream = socket.getOutputStream();
-            } catch (Exception ignore) {}
-            IntentFilter intentFilter = new IntentFilter(BroadcastUtil.ACTION_CHANGE_DATA_SOURCE);
+            } catch (Exception ignore) {
+
+            }
+            IntentFilter intentFilter = new IntentFilter(BroadcastUtil.ACTION_RECEIVE_DATA);
+            intentFilter.addAction(BroadcastUtil.ACTION_STOP_DATA);
             LocalBroadcastManager.getInstance(context).registerReceiver(instructionListener,intentFilter);
         }
 
@@ -159,6 +150,7 @@ public class WiFiConnectService extends Service {
                 try {
                     bufferLength = inputStream.read(buffer);
                 } catch (Exception e) {
+                    Log.i(TAG, "inputstream exception");
                     break;
                 }
                 if (bufferLength > 0) {
@@ -166,6 +158,7 @@ public class WiFiConnectService extends Service {
                     for (int i = 0; i<bufferLength; i++) {
                         save[i] = buffer[i];
                     }
+                    Log.i(TAG, new String(buffer, 0, bufferLength));
                     fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
                             try {
@@ -176,7 +169,6 @@ public class WiFiConnectService extends Service {
                     }
                 }
             }
-            broadcastUpdateInt(ACTION_DISCONNECT_NUMBER, ++disconnectCount);
             cancel();
         }
 
@@ -189,17 +181,8 @@ public class WiFiConnectService extends Service {
             // start new
             heartBeatThread = new Thread() {
                 public void run() {
-                    boolean switcher = false;
                     while(!Thread.currentThread().isInterrupted()) {
                         try {
-//                            outWrite("%HEARTBEAT\r\n");           //发送心跳@
-                            if (switcher) {
-                                outWrite("%BRAKE ON");
-                                switcher = false;
-                            }else {
-                                outWrite("%BRAKE OFF");
-                                switcher = true;
-                            }
                             Log.i(TAG, "heartBeat sent!");
                             Thread.sleep(30000);
                         } catch (InterruptedException e) {
@@ -229,18 +212,46 @@ public class WiFiConnectService extends Service {
         /**
          * tcp写数据
          */
-        private synchronized void outWrite(String data) {
+        private synchronized void outWrite(byte[] bytes) {
             try {
-                byte[] bytes = new byte[4];
-                bytes[0] = (byte) 0x58;
-                bytes[1] = (byte) 0x81;
-                bytes[2] = (byte) 0x0d;
-                bytes[3] = (byte) 0x0a;
                 outputStream.write(bytes);
-                Log.i(TAG, data);
             } catch (Exception e) {
                 Log.i(TAG,"heartBeat outWrite Exception");
             }
+        }
+
+        private void receiveData(int id) {
+            byte[] bytes = new byte[4];
+            bytes[1] = (byte) 0x81;
+            bytes[2] = (byte) 0x0d;
+            bytes[3] = (byte) 0x0a;
+            if (id == 1) {
+                bytes[0] = (byte) 0x58;
+            }
+            else if (id == 2) {
+                bytes[0] = (byte) 0x59;
+            }
+            else {
+                bytes[0] = (byte) 0x56;
+            }
+            outWrite(bytes);
+        }
+
+        private void stopData(int id) {
+            byte[] bytes = new byte[4];
+            bytes[1] = (byte) 0x82;
+            bytes[2] = (byte) 0x0d;
+            bytes[3] = (byte) 0x0a;
+            if (id == 1) {
+                bytes[0] = (byte) 0x58;
+            }
+            else if (id == 2) {
+                bytes[0] = (byte) 0x59;
+            }
+            else {
+                bytes[0] = (byte) 0x56;
+            }
+            outWrite(bytes);
         }
 
         void cancel() {
@@ -268,40 +279,22 @@ public class WiFiConnectService extends Service {
         }
 
         /**
-         *
+         * 数据源
          */
         private BroadcastReceiver instructionListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(BroadcastUtil.ACTION_CHANGE_DATA_SOURCE)) {
-//                    boolean switcher = intent.getBooleanExtra("BRAKE", true);
-//                    String out = String.valueOf(0x58) + " " + String.valueOf(0x81) + " " +
-//                            String.valueOf(0x0d) + " " + String.valueOf(0x0a);
-                    String out = "0x58 0x81 0x0d 0x0a";
-                    outWrite(out);
-//                    outWrite("0x81");
-//                    outWrite("0x0d");
-//                    outWrite("0x0a");
+                if (intent.getAction().equals(BroadcastUtil.ACTION_RECEIVE_DATA)) {
+                    int id = intent.getIntExtra("ID", 1);
+                    receiveData(id);
+                }
+                else if (intent.getAction().equals(BroadcastUtil.ACTION_STOP_DATA)) {
+                    int id = intent.getIntExtra("ID", 1);
+                    stopData(id);
                 }
             }
         };
     }
-
-    /**
-     * 广播
-     */
-    private void broadcastUpdate(final String action, String data) {
-        final Intent intent = new Intent(action);
-        intent.putExtra(EXTRA, data);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    private void broadcastUpdateInt(final String action, int data) {
-        final Intent intent = new Intent(action);
-        intent.putExtra(EXTRA, data);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
 
     public class ServiceBinder extends Binder {
         public WiFiConnectService getService() {

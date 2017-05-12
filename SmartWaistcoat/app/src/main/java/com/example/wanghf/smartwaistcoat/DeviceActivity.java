@@ -64,9 +64,6 @@ public class DeviceActivity extends Activity {
     }
 
     public void onClickBack(View view) {
-//        KeyEvent newEvent = new KeyEvent(KeyEvent.ACTION_DOWN,
-//                KeyEvent.KEYCODE_BACK);
-//        onKeyDown(KeyEvent.KEYCODE_BACK, newEvent);
         finish();
     }
 
