@@ -125,7 +125,7 @@
             android:summary="关"
             android:checked="false"/>
         <SwitchPreference
-            android:key="电话"
+            android:key="dianhua"
             android:title="电话提醒"
             android:summary="关"
             android:checked="false"/>
