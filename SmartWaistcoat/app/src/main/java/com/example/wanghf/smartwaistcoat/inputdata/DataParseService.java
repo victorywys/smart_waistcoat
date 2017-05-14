@@ -3,8 +3,10 @@ package com.example.wanghf.smartwaistcoat.inputdata;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.wanghf.smartwaistcoat.MainApplication;
@@ -35,6 +37,7 @@ public class DataParseService extends Service {
     private Context context;
 
     public void onCreate() {
+        context = this;
         if (byteFifo == null) {
             byteFifo = ByteFifo.getInstance();
         }
@@ -47,7 +50,7 @@ public class DataParseService extends Service {
         if (translateThread == null) {
             translateThread = new TranslateThread();
         }
-        context = this;
+
         if(!translateThread.isAlive()) {
             translateThread.start();
             Log.d(TAG, "PARSE THREAD START");
@@ -66,6 +69,8 @@ public class DataParseService extends Service {
         private int state = noneHead;
         private byte[] dataItem = new byte[64];
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int sourceID = sharedPreferences.getInt("source_id", 1);
 
         public void run() {
             while (!interrupted()) {
@@ -135,7 +140,7 @@ public class DataParseService extends Service {
                                     Log.i(TAG, "bytesQueue is empty");
                                 }
                             } else {
-                                dataParse5(Arrays.copyOfRange(dataItem, 0, dataCount));
+                                dataParse4(Arrays.copyOfRange(dataItem, 0, dataCount));
                                 state = noneHead;
                                 break;
                             }
@@ -184,13 +189,14 @@ public class DataParseService extends Service {
             WaistcoatData waistcoatData = new WaistcoatData();
             waistcoatData.setDianliang(byteUtil.getInt1(buffer[1]));
             int xueyang = buffer[5] & 127;
-//            if ((buffer[4] & 0x1) == 1) {
-//                // 血氧脉率最高位是1
-//                waistcoatData.setXueyang(xueyang + 128);
-//            }
-//            else {
-//                waistcoatData.setXueyang(xueyang);
-//            }
+            int xinlv = buffer[4] & 127;
+            if ((buffer[3] & 0x1) == 1) {
+                // 心率
+                waistcoatData.setXinlv(xinlv + 128);
+            }
+            else {
+                waistcoatData.setXinlv(xinlv);
+            }
             waistcoatData.setXueyang(xueyang);
             waistcoatData.setWendu(((buffer[6] & 127) + 320) / 10);
 
@@ -220,7 +226,10 @@ public class DataParseService extends Service {
             int data4 = ((buffer[11] & 0x7f) + head[11] * 256) * 256 * 256 +
                     ((buffer[12] & 0x7f) + 256 * head[10]) * 256 + (buffer[13] & 0x7f) + 256 * head[9];
 
-            BroadcastUtil.updateECG(context, (data1 + data2 + data3 + data4) / 4);
+            BroadcastUtil.updateECG(context, data1);
+            BroadcastUtil.updateECG(context, data2);
+            BroadcastUtil.updateECG(context, data3);
+            BroadcastUtil.updateECG(context, data4);
         }
 
         private void dataParse3(byte[] buffer) {
@@ -245,7 +254,38 @@ public class DataParseService extends Service {
             int data4 = ((buffer[11] & 0x7f) + head[8] * 256) * 256 * 256 +
                     ((buffer[12] & 0x7f) + 256 * head[7]) * 256 + (buffer[13] & 0x7f) + 256 * head[6];
 
-            BroadcastUtil.updateStrike(context, (data1 + data2 + data3 + data4) / 4);
+            BroadcastUtil.updateImpedance(context, data1);
+            BroadcastUtil.updateImpedance(context, data2);
+            BroadcastUtil.updateImpedance(context, data3);
+            BroadcastUtil.updateImpedance(context, data4);
+        }
+
+        private void dataParse4(byte[] buffer) {
+            if (buffer.length < 15) {
+                return;
+            }
+            int[] head = new int[12];
+
+            for (int i = 0; i < 6; i++) {
+                head[i] = (buffer[0] >> i) & 0x1;
+            }
+            for (int i = 6; i < 12; i++) {
+                head[i] = (buffer[1] >> (i - 6)) & 0x1;
+            }
+
+            int data1 = ((buffer[2] & 0x7f) + head[5] * 256) * 256 + (buffer[3] & 0x7f) + 256 * head[4];
+            int data2 = ((buffer[4] & 0x7f) + head[3] * 256) * 256 + (buffer[5] & 0x7f) + 256 * head[2];
+            int data3 = ((buffer[6] & 0x7f) + head[1] * 256) * 256 + (buffer[7] & 0x7f) + 256 * head[0];
+            int data4 = ((buffer[8] & 0x7f) + head[11] * 256) * 256 + (buffer[9] & 0x7f) + 256 * head[10];
+            int data5 = ((buffer[10] & 0x7f) + head[9] * 256) * 256 + (buffer[11] & 0x7f) + 256 * head[8];
+            int data6 = ((buffer[12] & 0x7f) + head[7] * 256) * 256 + (buffer[13] & 0x7f) + 256 * head[6];
+
+            BroadcastUtil.updateStrike(context, data1);
+            BroadcastUtil.updateStrike(context, data2);
+            BroadcastUtil.updateStrike(context, data3);
+            BroadcastUtil.updateStrike(context, data4);
+            BroadcastUtil.updateStrike(context, data5);
+            BroadcastUtil.updateStrike(context, data6);
         }
 
         private void dataParse5(byte[] buffer) {
@@ -265,7 +305,8 @@ public class DataParseService extends Service {
             int data2 = ((buffer[8] & 0x7f) + head[11] * 256) * 256 + (buffer[9] & 0x7f) + 256 * head[10];
 
 
-            BroadcastUtil.updateStrike(context, (data1 + data2) / 2);
+            BroadcastUtil.updateStrike(context, data1);
+            BroadcastUtil.updateStrike(context, data2);
         }
 
         private void dataParse6(byte[] buffer) {
@@ -291,7 +332,9 @@ public class DataParseService extends Service {
                     ((buffer[11] & 0x7f) + 256 * head[8]) * 256 * 256 +
                     ((buffer[12] & 0x7f) + 256 * head[7]) * 256 + (buffer[13] & 0x7f) + 256 * head[6];
 
-            BroadcastUtil.updateImpedance(context, (data1 + data2 + data3) / 3);
+            BroadcastUtil.updateImpedance(context, data1);
+            BroadcastUtil.updateImpedance(context, data2);
+            BroadcastUtil.updateImpedance(context, data3);
         }
 
     }

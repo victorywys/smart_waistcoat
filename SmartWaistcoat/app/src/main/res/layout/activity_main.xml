@@ -20,6 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:textSize="24sp"
                 android:gravity="center"
                 android:text="基本数据"/>
 
@@ -39,6 +40,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:id="@+id/text_xinlv"
+                        android:textSize="20sp"
                         android:text="心率"
                         android:textColor="@color/off_white"
                         android:gravity="center"/>
@@ -56,6 +58,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:id="@+id/text_wendu"
+                        android:textSize="20sp"
                         android:text="温度"
                         android:textColor="@color/off_white"
                         android:gravity="center"/>
@@ -66,23 +69,6 @@
                         android:layout_weight="0.5"
                         android:id="@+id/text_num_wendu"
                         android:text="30.5"
-                        android:gravity="center"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:id="@+id/text_yali"
-                        android:text="压力"
-                        android:textColor="@color/off_white"
-                        android:gravity="center"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.5"
-                        android:id="@+id/text_num_yali"
-                        android:text="52"
                         android:gravity="center"/>
 
                 </LinearLayout>
@@ -99,6 +85,7 @@
                         android:layout_weight="1"
                         android:id="@+id/text_xueyangzhi"
                         android:text="血氧值"
+                        android:textSize="20sp"
                         android:textColor="@color/off_white"
                         android:gravity="center"/>
                     <TextView
@@ -112,22 +99,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:id="@+id/text_zukang"
-                        android:text="阻抗"
-                        android:textColor="@color/off_white"
-                        android:gravity="center"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.5"
-                        android:id="@+id/text_num_zukang"
-                        android:text="200"
-                        android:gravity="center"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
                         android:id="@+id/text_dianliang"
+                        android:textSize="20sp"
                         android:text="电量"
                         android:textColor="@color/off_white"
                         android:gravity="center"/>
@@ -232,39 +205,38 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/button_source"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="22sp"
-            android:background="@color/ap_gray"
-            android:onClick="onClickShowTable"
-            android:text="显示数据" />
+            android:background="@color/ap_transparent"
+            android:src="@drawable/table"
+            android:onClick="onClickShowTable" />
 
         <TextView
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/ap_white"/>
-        <Button
+        <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/button_switch_display"
-            android:text="开始上传"
-            android:textSize="22sp"
+            android:src="@drawable/begin"
+            android:background="@color/ap_transparent"
             android:layout_weight="1"
             android:onClick="onClickShowCurve"/>
         <TextView
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/ap_white"/>
-        <Button
+        <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/button_setting"
-            android:text="设置"
             android:textSize="22sp"
-            android:background="@color/ap_gray"
+            android:background="@color/ap_transparent"
+            android:src="@drawable/setting"
             android:layout_weight="1"
             android:onClick="onClickSettings"/>
     </LinearLayout>

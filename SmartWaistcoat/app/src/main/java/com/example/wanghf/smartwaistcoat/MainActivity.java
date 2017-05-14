@@ -19,6 +19,7 @@ import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.androidplot.Plot;
@@ -41,7 +42,7 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private static final int HISTORY_SIZE = 50;
+    private static final int HISTORY_SIZE = 1000;
 
     // 画曲线相关
     private XYPlot impulsePlot;
@@ -54,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewDianliang;
     private TextView textViewxueyang;
     private TextView textViewWendu;
-    private Button buttonDisplayCurve;
-    private Button buttonDisplayTable;
+    private TextView textViewXinlv;
+    private ImageButton buttonDisplayCurve;
+    private ImageButton buttonDisplayTable;
 
     private String callNumber = "";
     private String msgNumber1 = "";
@@ -63,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
     private String msgNumber3 = "";
 
     private boolean showingCurve;
+    private boolean curveActive = true;
     private boolean showingTable;
+    private boolean tableActive;
     private MainController mainController;
     private Context context;
 
@@ -122,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         ecgSeries.useImplicitXVals();
         impulseSeries = new SimpleXYSeries("SPO2");
         impulseSeries.useImplicitXVals();
-        strikeSeries = new SimpleXYSeries("GST-X");
+        strikeSeries = new SimpleXYSeries("GST");
         strikeSeries.useImplicitXVals();
 
         xinlvPlot.addSeries(ecgSeries, new LineAndPointFormatter(
@@ -131,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
                 Color.rgb(100, 100, 200), null, null, null));
         strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
                 Color.rgb(150, 200, 100), null, null, null));
-//        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
-//        xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
-//        xinlvPlot.setDomainStepValue(HISTORY_SIZE / 10);
+        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
+        xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
+        xinlvPlot.setDomainStepValue(HISTORY_SIZE);
 
 //        impulsePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.GROW);
 //        strikePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
@@ -150,12 +154,12 @@ public class MainActivity extends AppCompatActivity {
                 100, false);
 
         // 按钮
-        buttonDisplayCurve = (Button) findViewById(R.id.button_switch_display);
-        buttonDisplayTable = (Button) findViewById(R.id.button_source);
-        buttonDisplayCurve.setBackgroundColor(Color.DKGRAY);
+        buttonDisplayCurve = (ImageButton) findViewById(R.id.button_switch_display);
+        buttonDisplayTable = (ImageButton) findViewById(R.id.button_source);
 
         textViewDianliang = (TextView) findViewById(R.id.text_num_dianliang);
         textViewWendu = (TextView) findViewById(R.id.text_num_wendu);
+        textViewXinlv = (TextView) findViewById(R.id.text_num_xinlv);
         textViewxueyang = (TextView) findViewById(R.id.text_num_xueyangzhi);
     }
 
@@ -165,14 +169,15 @@ public class MainActivity extends AppCompatActivity {
     public void onClickShowCurve(View view) {
         findViewById(R.id.linear_table).setVisibility(View.GONE);
         findViewById(R.id.linear_curve).setVisibility(View.VISIBLE);
-        buttonDisplayCurve.setBackgroundColor(Color.DKGRAY);
-        buttonDisplayTable.setBackgroundColor(Color.GRAY);
 
-        if (!buttonDisplayTable.getText().equals("显示数据")) {
-            buttonDisplayCurve.setText("开始上传");
-            buttonDisplayTable.setText("显示数据");
+        if (tableActive) {
+            buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.begin));
+            buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.table));
+            tableActive = false;
+            curveActive = true;
             return;
         }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int id = Integer.parseInt(sharedPreferences.getString("source_id", "1"));
         // 停止数据
@@ -183,11 +188,11 @@ public class MainActivity extends AppCompatActivity {
 
         // 正在显示，停止数据
         if (showingCurve) {
-            buttonDisplayCurve.setText("开始上传");
+            buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             showingCurve = false;
             BroadcastUtil.stopData(context, id);
         } else {
-            buttonDisplayCurve.setText("停止上传");
+            buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.stop));
             showingCurve = true;
             BroadcastUtil.receiveData(context, id);
         }
@@ -196,14 +201,15 @@ public class MainActivity extends AppCompatActivity {
     public void onClickShowTable(View view) {
         findViewById(R.id.linear_table).setVisibility(View.VISIBLE);
         findViewById(R.id.linear_curve).setVisibility(View.GONE);
-        buttonDisplayTable.setBackgroundColor(Color.DKGRAY);
-        buttonDisplayCurve.setBackgroundColor(Color.GRAY);
 
-        if (!buttonDisplayCurve.getText().equals("显示曲线")) {
-            buttonDisplayTable.setText("开始上传");
-            buttonDisplayCurve.setText("显示曲线");
+        if (curveActive) {
+            curveActive = false;
+            tableActive = true;
+            buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.begin));
+            buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.curve));
             return;
         }
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         int id = Integer.parseInt(sharedPreferences.getString("source_id", "1"));
 
@@ -214,11 +220,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (showingTable) {
-            buttonDisplayTable.setText("开始上传");
+            buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             showingTable = false;
             BroadcastUtil.stopData(context, id);
         } else {
-            buttonDisplayTable.setText("停止上传");
+            buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.stop));
             showingTable = true;
             BroadcastUtil.receiveData(context, id);
         }
@@ -282,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 textViewWendu.setText(waistcoatData.getWendu() + "");
                 textViewxueyang.setText(waistcoatData.getXueyang() + "");
                 textViewDianliang.setText(waistcoatData.getDianliang() + "");
+                textViewXinlv.setText(waistcoatData.getXinlv() + "");
                 Log.i(TAG, "tables");
             }
 
@@ -306,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
 
                 strikeSeries.addLast(null, data);
 
-                strikeSeries.setTitle("GST-X");
+                strikeSeries.setTitle("GST");
                 Log.i(TAG, "strike" + data);
             }
 
