@@ -32,6 +32,12 @@ public abstract class BroadcastUtil {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    public static void sendMessage(Context context, String msg) {
+        Intent intent = new Intent(ACTION_SEND_MESSAGE);
+        intent.putExtra("MSG", msg);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
     public static void receiveData(Context context, int id) {
         Intent intent = new Intent(ACTION_RECEIVE_DATA);
         intent.putExtra("ID", id);

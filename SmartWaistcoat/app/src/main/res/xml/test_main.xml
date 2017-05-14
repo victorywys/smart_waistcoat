@@ -89,6 +89,45 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="报警条件">
-
+        <SwitchPreference
+            android:key="xinlv"
+            android:summary="范围未知"
+            android:title="心率正常范围"
+            android:dialogTitle="设置心率范围" />
+        <SwitchPreference
+            android:key="wendu"
+            android:summary="范围未知"
+            android:title="温度正常范围"
+            android:dialogTitle="设置温度范围"/>
+        <SwitchPreference
+            android:key="xueyang"
+            android:summary="范围未知"
+            android:title="血氧正常范围"
+            android:dialogTitle="设置血氧范围"/>
+        <SwitchPreference
+            android:key="yali"
+            android:summary="压力范围"
+            android:title="压力正常范围"
+            android:dialogTitle="设置压力范围"/>
+        <SwitchPreference
+            android:key="zukang"
+            android:title="阻抗正常范围"
+            android:summary="阻抗正常范围"
+            android:dialogTitle="设置阻抗正常范围"/>
+        <SwitchPreference
+            android:key="zhenling"
+            android:title="振铃提醒"
+            android:summary="关"
+            android:checked="false"/>
+        <SwitchPreference
+            android:key="duanxin"
+            android:title="短信提醒"
+            android:summary="关"
+            android:checked="false"/>
+        <SwitchPreference
+            android:key="电话"
+            android:title="电话提醒"
+            android:summary="关"
+            android:checked="false"/>
     </PreferenceCategory>
 </PreferenceScreen>

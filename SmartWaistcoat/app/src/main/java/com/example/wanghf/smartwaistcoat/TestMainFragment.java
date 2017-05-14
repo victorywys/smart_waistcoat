@@ -33,6 +33,14 @@ public class TestMainFragment extends PreferenceFragment {
     private Preference contactMsg2;
     private Preference contactMsg3;
     private Preference sourceId;
+    private Preference xinlv;
+    private Preference xueyang;
+    private Preference wendu;
+    private Preference yali;
+    private Preference zukang;
+    private Preference zhenling;
+    private Preference duanxin;
+    private Preference dianhua;
 
     private Context context;
     private AlertDialog.Builder tipDialog;  //提示框
@@ -91,39 +99,23 @@ public class TestMainFragment extends PreferenceFragment {
         contactMsg2.setSummary(sharedPreferences.getString("contact_msg2", "188"));
         contactMsg3 = findPreference("contact_msg3");
         contactMsg3.setSummary(sharedPreferences.getString("contact_msg3", "188"));
+        xinlv = findPreference("xinlv");
+        xinlv.setSummary(sharedPreferences.getBoolean("xinlv", false)? "开" : "关");
+        wendu = findPreference("wendu");
+        wendu.setSummary(sharedPreferences.getBoolean("wendu", false)? "开" : "关");
+        xueyang = findPreference("xueyang");
+        xueyang.setSummary(sharedPreferences.getBoolean("xueyang", false)? "开" : "关");
+        yali = findPreference("yali");
+        yali.setSummary(sharedPreferences.getBoolean("yali", false)? "开":"关");
+        zukang = findPreference("zukang");
+        zukang.setSummary(sharedPreferences.getBoolean("zukang", false)? "开":"关");
+        zhenling = findPreference("zhenling");
+        zhenling.setSummary(sharedPreferences.getBoolean("zhenling", false)? "开":"关");
+        duanxin = findPreference("duanxin");
+        duanxin.setSummary(sharedPreferences.getBoolean("duanxin", false)? "开":"关");
+        dianhua = findPreference("dianhua");
+        dianhua.setSummary(sharedPreferences.getBoolean("dianhua", false)? "开":"关");
     }
-
-    private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.OnGestureListener() {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return false;
-        }
-    };
 
     private void initListeners() {
         wifiName.setOnPreferenceChangeListener(onWifiNameChange);

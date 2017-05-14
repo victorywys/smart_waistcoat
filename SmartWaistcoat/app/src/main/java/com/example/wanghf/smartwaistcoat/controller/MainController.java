@@ -2,8 +2,10 @@ package com.example.wanghf.smartwaistcoat.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
@@ -36,10 +38,15 @@ public class MainController {
     public MainController(Context context, LinkedBlockingQueue queue) {
         this.context = context;
         this.queue = queue;
-    }
-
-    public MainController() {
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        alarmXinlv = sharedPreferences.getBoolean("xinlv", false);
+        alarmWendu = sharedPreferences.getBoolean("wendu", false);
+        alarmXueyang = sharedPreferences.getBoolean("xueyang", false);
+        alarmYali = sharedPreferences.getBoolean("yali", false);
+        alarmZukang = sharedPreferences.getBoolean("zukang", false);
+        alarmZhenling = sharedPreferences.getBoolean("zhenling", false);
+        alarmDuanxin = sharedPreferences.getBoolean("duanxin", false);
+        alarmDianhua = sharedPreferences.getBoolean("dianhua", false);
     }
 
     public void onResume() {
@@ -102,6 +109,13 @@ public class MainController {
         this.alarmZhenling = alarmZhenling;
     }
 
+
+    private WaistcoatData firFilter(WaistcoatData data) {
+        WaistcoatData outData = new WaistcoatData();
+
+        return outData;
+    }
+
     /**
      * 报警电话
      */
@@ -109,15 +123,8 @@ public class MainController {
         BroadcastUtil.makePhoneCall(context);
     }
 
-    private Properties loadConfig(Context context, String file) {
-        Properties properties = new Properties();
-        try {
-            FileInputStream s = new FileInputStream(file);
-            properties.load(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return properties;
+    private void sendMsg(String msg) {
+        BroadcastUtil.sendMessage(context, msg);
     }
+
 }
