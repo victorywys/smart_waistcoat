@@ -112,7 +112,6 @@ public class MainController {
 
     private WaistcoatData firFilter(WaistcoatData data) {
         WaistcoatData outData = new WaistcoatData();
-
         return outData;
     }
 

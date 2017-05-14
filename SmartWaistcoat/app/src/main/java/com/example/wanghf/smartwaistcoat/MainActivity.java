@@ -42,7 +42,7 @@ import java.util.Properties;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private static final int HISTORY_SIZE = 1000;
+    private static final int HISTORY_SIZE = 50;
 
     // 画曲线相关
     private XYPlot impulsePlot;
@@ -138,12 +138,13 @@ public class MainActivity extends AppCompatActivity {
         xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
         xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
         xinlvPlot.setDomainStepValue(HISTORY_SIZE);
+//        xinlvPlot.setRangeBoundaries(16776000, 16776500, BoundaryMode.FIXED);
 
 //        impulsePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.GROW);
-//        strikePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
-//        strikePlot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1000 / 10);
+//        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
+//        xinlvPlot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1000);
 
-        final PlotStatistics histStats = new PlotStatistics(1000, false);
+        final PlotStatistics histStats = new PlotStatistics(10000, false);
 
         impulsePlot.addListener(histStats);
         xinlvPlot.addListener(histStats);
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
         redrawer = new Redrawer(
                 Arrays.asList(new Plot[]{impulsePlot, strikePlot, xinlvPlot}),
-                100, false);
+                250, false);
 
         // 按钮
         buttonDisplayCurve = (ImageButton) findViewById(R.id.button_switch_display);
@@ -305,29 +306,29 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
-                int data = intent.getIntExtra("STRIKE", 0);
-
-                if (strikeSeries.size() > HISTORY_SIZE) {
-                    strikeSeries.removeFirst();
-                }
-
-                strikeSeries.addLast(null, data);
-
-                strikeSeries.setTitle("GST");
-                Log.i(TAG, "strike" + data);
+//                int data = intent.getIntExtra("STRIKE", 0);
+//
+//                if (strikeSeries.size() > HISTORY_SIZE) {
+//                    strikeSeries.removeFirst();
+//                }
+//
+//                strikeSeries.addLast(null, data);
+//
+//                strikeSeries.setTitle("GST");
+//                Log.i(TAG, "strike" + data);
             }
 
             if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
-                int data = intent.getIntExtra("IMPEDANCE", 0);
-
-                if (impulseSeries.size() > HISTORY_SIZE) {
-                    impulseSeries.removeFirst();
-                }
-
-                impulseSeries.addLast(null, data);
-                impulseSeries.setTitle("阻抗");
-
-                Log.i(TAG, "impedance" + data);
+//                int data = intent.getIntExtra("IMPEDANCE", 0);
+//
+//                if (impulseSeries.size() > HISTORY_SIZE) {
+//                    impulseSeries.removeFirst();
+//                }
+//
+//                impulseSeries.addLast(null, data);
+//                impulseSeries.setTitle("阻抗");
+//
+//                Log.i(TAG, "impedance" + data);
             }
         }
     };

@@ -83,7 +83,7 @@ public class WiFiConnectService extends Service {
         private Socket socket;
 
         public void run() {
-            while (true) {
+//            while (true) {
                 try {
                     socket = new Socket(InetAddress.getByName(IP), PORT);
                 } catch (Exception e) {
@@ -92,14 +92,14 @@ public class WiFiConnectService extends Service {
                         if (socket != null) {
                             socket.close();
                         }
-                        continue;
+//                        continue;
                     } catch (Exception ex) {
                         return;
                     }
                 }
                 connectedThread = new ConnectedThread(socket);
                 connectedThread.start();
-            }
+//            }
         }
 
         void cancel() {
@@ -159,7 +159,7 @@ public class WiFiConnectService extends Service {
                         save[i] = buffer[i];
                     }
                     Log.i(TAG, new String(buffer, 0, bufferLength));
-                    fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
+//                    fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
                             try {
                                 revBytes.put(buffer[i]);
