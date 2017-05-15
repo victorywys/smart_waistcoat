@@ -23,11 +23,5 @@
             android:summary="未知"
             android:inputType="numberDecimal"
             android:dialogTitle="设置设备端口"/>
-        <EditTextPreference
-            android:key="source_id"
-            android:title="数据源编号"
-            android:summary="未知"
-            android:inputType="numberDecimal"
-            android:dialogTitle="设置数据编号"/>
     </PreferenceCategory>
 </PreferenceScreen>

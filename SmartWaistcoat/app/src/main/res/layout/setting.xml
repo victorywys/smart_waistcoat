@@ -15,7 +15,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#99ffcc"
+        android:background="#9e9e9e"
         android:text="个人信息"
         android:textColor="@color/ap_black"
         android:textSize="24sp"
@@ -40,7 +40,7 @@
         android:id="@+id/text_setting4"
         android:layout_below="@id/text_setting3"
         android:textColor="@color/ap_black"
-        android:background="#99ffcc"
+        android:background="#9e9e9e"
         android:text="报警"
         android:textSize="24sp"
         android:onClick="onClickAlarm"/>
@@ -55,13 +55,24 @@
         android:textColor="@color/ap_black"
         android:textSize="24sp"
         android:onClick="onClickDevice"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_setting6"
+        android:layout_below="@id/text_setting5"
+        android:text="数据源"
+        android:textSize="24sp"
+        android:background="#9e9e9e"
+        android:textColor="@color/ap_white"
+        android:onClick="onClickDataSource"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/text_connect_state"
         android:text="连接状态：未连接"
-        android:background="#99ffcc"
-        android:layout_below="@id/text_setting5"
+        android:background="#ffffff"
+        android:layout_below="@id/text_setting6"
         android:textSize="24sp"
         android:textColor="@color/ap_black"
         android:gravity="center"/>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="数据源">
+        <ListPreference
+            android:key="data_source"
+            android:title="数据源名称"
+            android:summary="未知"
+            android:entries="@array/data_source"
+            android:entryValues="@array/data_source"
+            android:dialogTitle="设置数据源名称" />
+    </PreferenceCategory>
+</PreferenceScreen>

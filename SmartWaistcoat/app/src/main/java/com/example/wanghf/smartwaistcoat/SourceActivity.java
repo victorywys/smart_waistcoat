@@ -6,20 +6,18 @@ import android.support.annotation.Nullable;
 
 import com.example.wanghf.myapplication.R;
 
-
 /**
- * Created by wanghf on 2017/4/18.
+ * Created by wanghf on 2017/5/15.
  */
 
-public class AlarmActivity extends Activity {
-
+public class SourceActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.alarm);
+        setContentView(R.layout.source);
 
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new AlarmFragment())
+                .replace(android.R.id.content, new SourceFragment())
                 .commit();
 
     }

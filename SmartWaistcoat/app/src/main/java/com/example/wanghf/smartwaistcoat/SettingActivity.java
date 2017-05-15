@@ -52,4 +52,11 @@ public class SettingActivity extends Activity {
     public void onClickDevice(View view) {
         startActivity(new Intent(SettingActivity.this, DeviceActivity.class));
     }
+
+    /**
+     * 选择数据源
+     */
+    public void onClickDataSource(View view) {
+        startActivity(new Intent(SettingActivity.this, SourceActivity.class));
+    }
 }

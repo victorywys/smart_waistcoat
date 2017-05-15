@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Waistcoat</string>
+
+    <string-array name="data_source">
+        <item>心电测量</item>
+        <item>血氧测量</item>
+        <item>G-senso测量</item>
+        <item>压力测量</item>
+        <item>阻抗测量</item>
+        <item>01包</item>
+        <item>组合包1</item>
+        <item>组合包2</item>
+        <item>组合包3</item>
+        <item>组合包4</item>
+        <item>组合包5</item>
+        <item>组合包6</item>
+    </string-array>
+
+    <string name="default_source">组合包1</string>
+
 </resources>

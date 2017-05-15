@@ -18,7 +18,6 @@ public class DeviceFragment extends PreferenceFragment {
     private Preference devicePort;
     private Preference wifiName;
     private Preference wifiPassword;
-    private Preference sourceId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,8 +37,6 @@ public class DeviceFragment extends PreferenceFragment {
         deviceIP.setSummary(sharedPreferences.getString("device_ip", "127.0.0.1"));
         devicePort = findPreference("device_port");
         devicePort.setSummary(sharedPreferences.getString("device_port", "8899"));
-        sourceId = findPreference("source_id");
-        sourceId.setSummary(sharedPreferences.getString("source_id", "1"));
         wifiName = findPreference("wifi_name");
         wifiName.setSummary(sharedPreferences.getString("wifi_name", "wireless"));
         wifiPassword = findPreference("wifi_password");
@@ -52,7 +49,6 @@ public class DeviceFragment extends PreferenceFragment {
         wifiPassword.setOnPreferenceChangeListener(onWifiPasswordChange);
         deviceIP.setOnPreferenceChangeListener(onDeviceIpChange);
         devicePort.setOnPreferenceChangeListener(onDevicePortChange);
-        sourceId.setOnPreferenceChangeListener(onSourceIDChange);
     }
 
     protected Preference.OnPreferenceChangeListener onWifiNameChange = new Preference.OnPreferenceChangeListener() {
@@ -84,18 +80,6 @@ public class DeviceFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             try {
                 deviceIP.setSummary(String.valueOf(newValue));
-            } catch (Exception ex) {
-                showTip(ex.getMessage());
-            }
-            return true;
-        }
-    };
-
-    protected Preference.OnPreferenceChangeListener onSourceIDChange = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            try {
-                sourceId.setSummary(String.valueOf(newValue));
             } catch (Exception ex) {
                 showTip(ex.getMessage());
             }
