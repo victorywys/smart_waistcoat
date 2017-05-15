@@ -135,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
                 Color.rgb(100, 100, 200), null, null, null));
         strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
                 Color.rgb(150, 200, 100), null, null, null));
-        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
-        xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
-        xinlvPlot.setDomainStepValue(HISTORY_SIZE);
+//        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
+//        xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
+//        xinlvPlot.setDomainStepValue(HISTORY_SIZE);
 //        xinlvPlot.setRangeBoundaries(16776000, 16776500, BoundaryMode.FIXED);
 
 //        impulsePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.GROW);

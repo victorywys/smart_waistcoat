@@ -1,10 +1,14 @@
 package com.example.wanghf.smartwaistcoat;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.wanghf.myapplication.R;
@@ -23,13 +27,14 @@ public class AlarmFragment extends PreferenceFragment {
     private Preference duanxin;
     private Preference dianhua;
 
+    private Context context;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.alarm);
-
 
         initViews();
         initListeners();
@@ -57,6 +62,177 @@ public class AlarmFragment extends PreferenceFragment {
     }
 
     private void initListeners() {
-
+        xinlv.setOnPreferenceChangeListener(onXinlvChange);
+        xueyang.setOnPreferenceChangeListener(onXueyangChange);
+        wendu.setOnPreferenceChangeListener(onWenduChange);
+        yali.setOnPreferenceChangeListener(onYaliChange);
+        zukang.setOnPreferenceChangeListener(onZukangChange);
+        zhenling.setOnPreferenceChangeListener(onzZhenlingChange);
+        duanxin.setOnPreferenceChangeListener(onDuanxinChange);
+        dianhua.setOnPreferenceChangeListener(onDianhuaChange);
     }
+
+    private Preference.OnPreferenceChangeListener onXinlvChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final EditText editText = new EditText(getActivity());
+            boolean res = (boolean) newValue;
+            if (res) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("请输入正常心率范围")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String input = editText.getText().toString();
+                                xinlv.setSummary(input);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return true;
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onXueyangChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final EditText editText = new EditText(getActivity());
+            boolean res = (boolean) newValue;
+            if (res) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("请输入血氧下限值")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String input = editText.getText().toString();
+                                xueyang.setSummary(input);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return true;
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onWenduChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final EditText editText = new EditText(getActivity());
+            boolean res = (boolean) newValue;
+            if (res) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("请输入正常温度范围")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String input = editText.getText().toString();
+                                wendu.setSummary(input);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return true;
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onYaliChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final EditText editText = new EditText(getActivity());
+            boolean res = (boolean) newValue;
+            if (res) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("请输入压力上限值")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String input = editText.getText().toString();
+                                yali.setSummary(input);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return true;
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onZukangChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final EditText editText = new EditText(getActivity());
+            boolean res = (boolean) newValue;
+            if (res) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("请输入阻抗下限值")
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String input = editText.getText().toString();
+                                zukang.setSummary(input);
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
+                return true;
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onzZhenlingChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if ((boolean) newValue) {
+                zhenling.setSummary("开");
+            }
+            else {
+                zhenling.setSummary("关");
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onDuanxinChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if ((boolean) newValue) {
+                duanxin.setSummary("开");
+            }
+            else {
+                duanxin.setSummary("关");
+            }
+            return true;
+        }
+    };
+
+    private Preference.OnPreferenceChangeListener onDianhuaChange = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if ((boolean) newValue) {
+                dianhua.setSummary("开");
+            }
+            else {
+                dianhua.setSummary("关");
+            }
+            return true;
+        }
+    };
 }

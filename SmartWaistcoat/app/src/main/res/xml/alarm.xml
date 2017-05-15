@@ -6,18 +6,17 @@
         <SwitchPreference
             android:key="xinlv"
             android:summary="范围未知"
-            android:title="心率正常范围"
-            android:dialogTitle="设置心率范围" />
+            android:title="心率正常范围"/>
         <SwitchPreference
             android:key="wendu"
             android:summary="范围未知"
             android:title="温度正常范围"
-            android:dialogTitle="设置温度范围"/>
+            android:defaultValue="false"/>
         <SwitchPreference
             android:key="xueyang"
             android:summary="范围未知"
             android:title="血氧正常范围"
-            android:dialogTitle="设置血氧范围"/>
+            android:defaultValue="false"/>
         <SwitchPreference
             android:key="yali"
             android:summary="压力范围"

@@ -51,6 +51,7 @@
                         android:layout_weight="0.5"
                         android:id="@+id/text_num_xinlv"
                         android:gravity="center"
+                        android:textSize="20sp"
                         android:text="55"/>
 
                     <TextView
@@ -66,6 +67,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:textSize="20sp"
                         android:layout_weight="0.5"
                         android:id="@+id/text_num_wendu"
                         android:text="30.5"
@@ -92,6 +94,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="0.5"
+                        android:textSize="20sp"
                         android:id="@+id/text_num_xueyangzhi"
                         android:text="98%"
                         android:gravity="center"/>
@@ -102,19 +105,27 @@
                         android:id="@+id/text_dianliang"
                         android:textSize="20sp"
                         android:text="电量"
+                        android:textColorHighlight="@color/ap_white"
                         android:textColor="@color/off_white"
                         android:gravity="center"/>
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="0.5"
                         android:id="@+id/text_num_dianliang"
                         android:text="4.2V"
-                        android:gravity="center"/>
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:layout_gravity="center"/>
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"/>
 
         </LinearLayout>
 
