@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="紧急联系方式">
+        <EditTextPreference
+            android:key="contact_call"
+            android:summary="未知"
+            android:title="电话联系"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置紧急电话"/>
+
+        <EditTextPreference
+            android:key="contact_msg1"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:title="短信联系"
+            android:dialogTitle="设置紧急短息"/>
+        <EditTextPreference
+            android:dialogTitle="设置紧急短息"
+            android:key="contact_msg2"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:title="短信联系" />
+        <EditTextPreference
+            android:key="contact_msg3"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:title="短信联系"
+            android:dialogTitle="设置紧急短息"/>
+    </PreferenceCategory>
+</PreferenceScreen>

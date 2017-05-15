@@ -33,9 +33,6 @@ public class EmergencyContactActivity extends Activity {
     private EditText editTextMSG2;
     private EditText editTextMSG3;
 
-
-    private int sourceId = 1;
-
     private Context context;
 
     @Override
@@ -45,77 +42,10 @@ public class EmergencyContactActivity extends Activity {
 
         context = this;
 
-        initViews();
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new EmergencyFragment())
+                .commit();
     }
 
-    private void initViews() {
-        editTextCall = (EditText) findViewById(R.id.contact_text_call);
-        editTextMSG1 = (EditText) findViewById(R.id.contact_text_message1);
-        editTextMSG2 = (EditText) findViewById(R.id.contact_text_message2);
-        editTextMSG3 = (EditText) findViewById(R.id.contact_text_message3);
 
-
-        Properties prop = loadConfig(context, Environment.getExternalStorageDirectory()+ "/AAA/contact.properties");
-        if (prop == null) {
-            return;
-        }
-
-        String call = prop.get("CALL").toString();
-        String msg1 = prop.get("MSG1").toString();
-        String msg2 = prop.get("MSG2").toString();
-        String msg3 = prop.get("MSG3").toString();
-
-        editTextCall.setText(call);
-        editTextMSG1.setText(msg1);
-        editTextMSG2.setText(msg2);
-        editTextMSG3.setText(msg3);
-    }
-
-    public void onClickBack(View view) {
-        finish();
-    }
-
-    public void onClickSaveUpdate(View view) {
-        Properties prop = loadConfig(context, Environment.getExternalStorageDirectory()+ "/AAA/contact.properties");
-        String call = editTextCall.getText().toString();
-        String msg1 = editTextMSG1.getText().toString();
-        String msg2 = editTextMSG2.getText().toString();
-        String msg3 = editTextMSG3.getText().toString();
-        if (prop == null) {
-            // 配置文件不存在的时候创建配置文件 初始化配置信息
-            prop = new Properties();
-        }
-        prop.put("CALL", call);
-        prop.put("MSG1", msg1);
-        prop.put("MSG2", msg2);
-        prop.put("MSG3", msg3);
-
-        saveConfig(context, Environment.getExternalStorageDirectory() + "/AAA/contact.properties", prop);
-    }
-
-    private Properties loadConfig(Context context, String file) {
-        Properties properties = new Properties();
-        try {
-            FileInputStream s = new FileInputStream(file);
-            properties.load(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return properties;
-    }
-
-    private boolean saveConfig(Context context, String file, Properties properties) {
-        try {
-            File fil = new File(file);
-            if (!fil.exists())
-                fil.createNewFile();
-            FileOutputStream s = new FileOutputStream(fil);
-            properties.store(s, "");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 }

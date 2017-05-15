@@ -1,6 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:text="设置"
+        android:textColor="@color/ap_black"
+        android:background="@color/ap_white"
+        android:id="@+id/text_setting1"
+        android:textSize="30sp" />
 
-</LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#99ffcc"
+        android:text="个人信息"
+        android:textColor="@color/ap_black"
+        android:textSize="24sp"
+        android:id="@+id/text_setting2"
+        android:layout_below="@+id/text_setting1"
+        android:onClick="onClickSettingPersonInfo"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_setting3"
+        android:background="#ffffff"
+        android:textColor="@color/ap_black"
+        android:layout_below="@+id/text_setting2"
+        android:text="紧急联系人"
+        android:textSize="24sp"
+        android:onClick="onClickEmergencyContact"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_setting4"
+        android:layout_below="@id/text_setting3"
+        android:textColor="@color/ap_black"
+        android:background="#99ffcc"
+        android:text="报警"
+        android:textSize="24sp"
+        android:onClick="onClickAlarm"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_setting5"
+        android:layout_below="@+id/text_setting4"
+        android:text="设备"
+        android:background="#ffffff"
+        android:textColor="@color/ap_black"
+        android:textSize="24sp"
+        android:onClick="onClickDevice"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_connect_state"
+        android:text="连接状态：未连接"
+        android:background="#99ffcc"
+        android:layout_below="@id/text_setting5"
+        android:textSize="24sp"
+        android:textColor="@color/ap_black"
+        android:gravity="center"/>
+
+</RelativeLayout>

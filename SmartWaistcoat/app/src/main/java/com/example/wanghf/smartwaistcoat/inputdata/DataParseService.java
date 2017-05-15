@@ -244,12 +244,12 @@ public class DataParseService extends Service {
             data3 = data3 > tp ? (data3 - tp * 2) : data3;
             data4 = data4 > tp ? (data4 - tp * 2) : data4;
 
-            int limit = 1500;
-
-            if (Math.abs(data1) > limit || Math.abs(data2) > limit || Math.abs(data3) > limit
-                    || Math.abs(data4) > limit) {
-                return;
-            }
+//            int limit = 1500;
+//
+//            if (Math.abs(data1) > limit || Math.abs(data2) > limit || Math.abs(data3) > limit
+//                    || Math.abs(data4) > limit) {
+//                return;
+//            }
 
             BroadcastUtil.updateECG(context, data1);
             BroadcastUtil.updateECG(context, data2);

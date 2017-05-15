@@ -72,7 +72,7 @@
 
         </activity>
 
-        <activity android:name="com.example.wanghf.smartwaistcoat.TestMainActivity"
+        <activity android:name="com.example.wanghf.smartwaistcoat.SettingActivity"
             android:screenOrientation="portrait">
 
         </activity>

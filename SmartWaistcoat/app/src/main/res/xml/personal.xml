@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="个人信息">
+        <EditTextPreference
+            android:key="user_name"
+            android:title="用户姓名"
+            android:summary="未知"
+            android:dialogTitle="设置用户姓名"/>
+        <SwitchPreference
+            android:key="user_gender"
+            android:title="用户性别"
+            android:defaultValue="true"
+            android:summary="男"/>
+        <EditTextPreference
+            android:key="user_age"
+            android:title="用户年龄"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置用户年龄"/>
+        <EditTextPreference
+            android:key="user_number"
+            android:title="用户病历号"
+            android:summary="未知"
+            android:inputType="numberDecimal"
+            android:dialogTitle="设置用户病历号"/>
+        <EditTextPreference
+            android:key="user_history"
+            android:title="用户病例史"
+            android:summary="未知"
+            android:dialogTitle="添加病例史"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -128,12 +128,14 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:id="@+id/main_plot_ecg"
+                ap:paddingLeft="10dp"
                 style="@style/APDefacto.Dark"/>
 
             <com.androidplot.xy.XYPlot
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                ap:marginLeft="10dp"
                 style="@style/APDefacto.Dark"
                 android:id="@+id/main_plot_impulse" />
 
@@ -142,6 +144,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 ap:titleTextSize="0sp"
+                ap:marginLeft="10dp"
                 android:id="@+id/main_plot_strike"
                 style="@style/APDefacto.Dark"/>
         </LinearLayout>
@@ -210,34 +213,37 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/ap_transparent"
-            android:src="@drawable/table"
-            android:onClick="onClickShowTable" />
+            android:background="@color/ap_white"
+            android:onClick="onClickShowTable"
+            android:src="@drawable/table" />
 
         <TextView
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/ap_white"/>
+            android:background="@color/ap_gray" />
+
         <ImageButton
+            android:id="@+id/button_switch_display"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:id="@+id/button_switch_display"
-            android:src="@drawable/begin"
-            android:background="@color/ap_transparent"
             android:layout_weight="1"
-            android:onClick="onClickShowCurve"/>
+            android:background="@color/ap_white"
+            android:onClick="onClickShowCurve"
+            android:src="@drawable/begin" />
+
         <TextView
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/ap_white"/>
+            android:background="@color/ap_gray" />
+
         <ImageButton
+            android:id="@+id/button_setting"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:id="@+id/button_setting"
-            android:textSize="22sp"
-            android:background="@color/ap_transparent"
-            android:src="@drawable/setting"
             android:layout_weight="1"
-            android:onClick="onClickSettings"/>
+            android:background="@color/ap_white"
+            android:onClick="onClickSettings"
+            android:src="@drawable/setting"
+            android:textSize="22sp" />
     </LinearLayout>
 </LinearLayout>

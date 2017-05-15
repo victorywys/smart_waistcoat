@@ -32,29 +32,11 @@ public class AlarmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm);
 
-        initViews();
+//        initViews();
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new AlarmFragment())
+                .commit();
 
     }
 
-    private void initViews() {
-        switchXinlv = (Switch) findViewById(R.id.alarm_switch_xinlv);
-        switchWendu = (Switch) findViewById(R.id.alarm_switch_wendu);
-        switchXueyang = (Switch) findViewById(R.id.alarm_switch_xueyang);
-        switchYali = (Switch) findViewById(R.id.alarm_switch_yali);
-        switchZukang = (Switch) findViewById(R.id.alarm_switch_zukang);
-        switchZhenling = (Switch) findViewById(R.id.alarm_switch_zhenling);
-        switchDuanxin = (Switch) findViewById(R.id.alarm_switch_duanxin);
-        switchDianhua = (Switch) findViewById(R.id.alarm_switch_dianhua);
-
-        switchXinlv.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-            }
-        });
-    }
-
-    public void onClickBack(View view) {
-        finish();
-    }
 }

@@ -72,7 +72,7 @@ public class WiFiConnectService extends Service {
      */
     private void initConnectInfo() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        IP = sharedPreferences.getString("device_ip", "127.0.0.1");
+        IP = sharedPreferences.getString("device_ip", "10.10.100.254");
         PORT = Integer.parseInt(sharedPreferences.getString("device_port", "8899"));
     }
 
@@ -88,11 +88,9 @@ public class WiFiConnectService extends Service {
                     socket = new Socket(InetAddress.getByName(IP), PORT);
                 } catch (Exception e) {
                     try {
-//                        Log.d(TAG, "connect err");
                         if (socket != null) {
                             socket.close();
                         }
-//                        continue;
                     } catch (Exception ex) {
                         return;
                     }
@@ -154,11 +152,11 @@ public class WiFiConnectService extends Service {
                     break;
                 }
                 if (bufferLength > 0) {
-                    byte[] save = new byte[bufferLength];
-                    for (int i = 0; i<bufferLength; i++) {
-                        save[i] = buffer[i];
-                    }
-                    Log.i(TAG, new String(buffer, 0, bufferLength));
+//                    byte[] save = new byte[bufferLength];
+//                    for (int i = 0; i<bufferLength; i++) {
+//                        save[i] = buffer[i];
+//                    }
+//                    Log.i(TAG, new String(buffer, 0, bufferLength));
 //                    fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
                             try {

@@ -235,37 +235,10 @@ public class MainActivity extends AppCompatActivity {
      * 设置
      */
     public void onClickSettings(View view) {
-        Intent intent = new Intent(context, TestMainActivity.class);
+        Intent intent = new Intent(context, SettingActivity.class);
         startActivity(intent);
     }
 
-    /**
-     * 个人信息
-     */
-    public void onClickSettingPersonInfo(View view) {
-        startActivity(new Intent(MainActivity.this, PersonalInfoActivity.class));
-    }
-
-    /**
-     * 紧急通信
-     */
-    public void onClickEmergencyContact(View view) {
-        startActivity(new Intent(MainActivity.this, EmergencyContactActivity.class));
-    }
-
-    /**
-     * 设置报警信息
-     */
-    public void onClickAlarm(View view) {
-        startActivity(new Intent(MainActivity.this, AlarmActivity.class));
-    }
-
-    /**
-     * 设备信息
-     */
-    public void onClickDevice(View view) {
-        startActivity(new Intent(MainActivity.this, DeviceActivity.class));
-    }
 
     /**
      * 广播
