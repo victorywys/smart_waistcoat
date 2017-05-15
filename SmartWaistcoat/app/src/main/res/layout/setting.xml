@@ -10,14 +10,14 @@
         android:textColor="@color/ap_black"
         android:background="@color/ap_white"
         android:id="@+id/text_setting1"
-        android:textSize="30sp" />
+        android:textSize="22sp" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#9e9e9e"
         android:text="个人信息"
-        android:textColor="@color/ap_black"
+        android:textColor="@color/ap_white"
         android:textSize="24sp"
         android:id="@+id/text_setting2"
         android:layout_below="@+id/text_setting1"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/text_setting4"
         android:layout_below="@id/text_setting3"
-        android:textColor="@color/ap_black"
+        android:textColor="@color/ap_white"
         android:background="#9e9e9e"
         android:text="报警"
         android:textSize="24sp"
