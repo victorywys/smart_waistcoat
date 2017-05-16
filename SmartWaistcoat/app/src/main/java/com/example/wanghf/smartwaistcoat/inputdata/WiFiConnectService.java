@@ -44,6 +44,24 @@ public class WiFiConnectService extends Service {
     private LinkedBlockingQueue<Byte> revBytes;
     private FileUtil fileUtil = new FileUtil();
 
+    private HashMap<Integer, byte[]> sourceMap = new HashMap<Integer, byte[]>() {
+        {
+            sourceMap.put(1, new byte[]{(byte) 0x51, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(2, new byte[]{(byte) 0x52, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(3, new byte[]{(byte) 0x53, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(4, new byte[]{(byte) 0x54, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(5, new byte[]{(byte) 0x55, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(6, new byte[]{(byte) 0x56, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+
+            sourceMap.put(7, new byte[]{(byte) 0x58, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(8, new byte[]{(byte) 0x58, (byte) 0x83, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(9, new byte[]{(byte) 0x58, (byte) 0x85, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(10, new byte[]{(byte) 0x59, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(11, new byte[]{(byte) 0x59, (byte) 0x83, (byte) 0x0d, (byte) 0x0a});
+            sourceMap.put(12, new byte[]{(byte) 0x59, (byte) 0x85, (byte) 0x0d, (byte) 0x0a});
+        }
+    };
+
     public static Thread heartBeatThread = null;
 
     /**
@@ -220,21 +238,11 @@ public class WiFiConnectService extends Service {
         }
 
         private void receiveData(int id) {
-            byte[] bytes = new byte[4];
-            bytes[1] = (byte) 0x81;
-            bytes[2] = (byte) 0x0d;
-            bytes[3] = (byte) 0x0a;
-            bytes[0] = (byte) 0x58;
-            outWrite(bytes);
+            outWrite(sourceMap.get(id));
         }
 
         private void stopData(int id) {
-            byte[] bytes = new byte[4];
-            bytes[1] = (byte) 0x82;
-            bytes[2] = (byte) 0x0d;
-            bytes[3] = (byte) 0x0a;
-            bytes[0] = (byte) 0x58;
-            outWrite(bytes);
+            outWrite(sourceMap.get(id));
         }
 
         void cancel() {
