@@ -34,10 +34,20 @@ import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
 import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
+import com.example.wanghf.smartwaistcoat.widget.EcgView;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -71,7 +81,30 @@ public class MainActivity extends AppCompatActivity {
     private MainController mainController;
     private Context context;
 
+    private List<Integer> datas = new ArrayList<Integer>();
+    private List<Integer> data1Datas = new ArrayList<Integer>();
+
+    private Queue<Integer> data0Q = new LinkedList<Integer>();
+    private Queue<Integer> data1Q = new LinkedList<Integer>();
+
     private Redrawer redrawer;
+
+    private HashMap<String, Integer> sourceMap = new HashMap<String, Integer>(){
+        {
+            put("心电测量", 1);
+            put("血氧测量", 2);
+            put("G-senso测量", 3);
+            put("压力测量", 4);
+            put("阻抗测量", 5);
+            put("01包", 6);
+            put("组合包1", 7);
+            put("组合包2", 8);
+            put("组合包3", 9);
+            put("组合包4", 10);
+            put("组合包5", 11);
+            put("组合包6", 12);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
         mainController = new MainController(context, MainApplication.getQueue());
 
         initPlots();
+
+//        loadDatas();
+//        simulator();
     }
 
     @Override
@@ -90,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mainController.onResume();
 
-        redrawer.start();
+//        redrawer.start();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
@@ -106,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        redrawer.pause();
+//        redrawer.pause();
 
         LocalBroadcastManager.getInstance(context).unregisterReceiver(myReceiver);
     }
@@ -114,12 +150,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        redrawer.finish();
+//        redrawer.finish();
     }
 
     private void initPlots() {
         impulsePlot = (XYPlot) findViewById(R.id.main_plot_impulse);
-        xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
+//        xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
         strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
 
         ecgSeries = new SimpleXYSeries("ECG");
@@ -129,30 +165,22 @@ public class MainActivity extends AppCompatActivity {
         strikeSeries = new SimpleXYSeries("GST");
         strikeSeries.useImplicitXVals();
 
-        xinlvPlot.addSeries(ecgSeries, new LineAndPointFormatter(
-                Color.rgb(200, 100, 100), null, null, null));
+//        xinlvPlot.addSeries(ecgSeries, new LineAndPointFormatter(
+//                Color.rgb(200, 100, 100), null, null, null));
         impulsePlot.addSeries(impulseSeries, new LineAndPointFormatter(
                 Color.rgb(100, 100, 200), null, null, null));
         strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
                 Color.rgb(150, 200, 100), null, null, null));
-//        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
-//        xinlvPlot.setDomainStepMode(StepMode.INCREMENT_BY_VAL);
-//        xinlvPlot.setDomainStepValue(HISTORY_SIZE);
-//        xinlvPlot.setRangeBoundaries(16776000, 16776500, BoundaryMode.FIXED);
-
-//        impulsePlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.GROW);
-//        xinlvPlot.setDomainBoundaries(0, HISTORY_SIZE, BoundaryMode.FIXED);
-//        xinlvPlot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1000);
 
         final PlotStatistics histStats = new PlotStatistics(10000, false);
 
         impulsePlot.addListener(histStats);
-        xinlvPlot.addListener(histStats);
+//        xinlvPlot.addListener(histStats);
         strikePlot.addListener(histStats);
 
-        redrawer = new Redrawer(
-                Arrays.asList(new Plot[]{impulsePlot, strikePlot, xinlvPlot}),
-                250, false);
+//        redrawer = new Redrawer(
+//                Arrays.asList(new Plot[]{impulsePlot, strikePlot, xinlvPlot}),
+//                250, false);
 
         // 按钮
         buttonDisplayCurve = (ImageButton) findViewById(R.id.button_switch_display);
@@ -180,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int id = Integer.parseInt(sharedPreferences.getString("source_id", "1"));
+        int id = sourceMap.get(sharedPreferences.getString("source_id", "组合包1"));
         // 停止数据
         if (showingTable) {
             BroadcastUtil.stopData(context, id);
@@ -212,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int id = Integer.parseInt(sharedPreferences.getString("source_id", "1"));
+        int id = sourceMap.get(sharedPreferences.getString("source_id", "组合包1"));
 
         // 停止
         if (showingCurve) {
@@ -268,13 +296,14 @@ public class MainActivity extends AppCompatActivity {
 
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
-
-                if (ecgSeries.size() > HISTORY_SIZE) {
-                    ecgSeries.removeFirst();
-                }
-
-                ecgSeries.addLast(null, data);
-
+                EcgView.addEcgData0(data);
+//
+//                if (ecgSeries.size() > HISTORY_SIZE) {
+//                    ecgSeries.removeFirst();
+//                }
+//
+//                ecgSeries.addLast(null, data);
+//
                 Log.i(TAG, "ecg" + data);
             }
 
@@ -335,5 +364,40 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("sms_body", message);
             startActivity(intent);
         }
+    }
+
+    /**
+     * 模拟心电发送，心电数据是一秒500个包，所以
+     */
+    private void simulator(){
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(EcgView.isRunning){
+                    if(data0Q.size() > 0){
+                        EcgView.addEcgData0(data0Q.poll());
+                    }
+                }
+            }
+        }, 0, 4);
+    }
+
+    private void loadDatas(){
+        try{
+            String data0 = "";
+            InputStream in = getResources().openRawResource(R.raw.ecgdata);
+            int length = in.available();
+            byte [] buffer = new byte[length];
+            in.read(buffer);
+            data0 = new String(buffer);
+            in.close();
+            String[] data0s = data0.split(",");
+            for(String str : data0s){
+                datas.add(Integer.parseInt(str));
+            }
+
+            data0Q.addAll(datas);
+        }catch (Exception e){}
+
     }
 }

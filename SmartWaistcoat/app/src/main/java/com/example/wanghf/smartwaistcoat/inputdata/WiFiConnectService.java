@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -223,22 +224,7 @@ public class WiFiConnectService extends Service {
             bytes[1] = (byte) 0x81;
             bytes[2] = (byte) 0x0d;
             bytes[3] = (byte) 0x0a;
-            if (id <= 3) {
-                bytes[0] = (byte) 0x58;
-            }
-            else if (id <= 6) {
-                bytes[0] = (byte) 0x59;
-            }
-            else {
-                bytes[0] = (byte) 0x56;
-            }
-
-            if (id % 3 == 2) {
-                bytes[1] = (byte) 0x83;
-            }
-            else if (id % 3 == 0) {
-                bytes[1] = (byte) 0x85;
-            }
+            bytes[0] = (byte) 0x58;
             outWrite(bytes);
         }
 
@@ -247,22 +233,7 @@ public class WiFiConnectService extends Service {
             bytes[1] = (byte) 0x82;
             bytes[2] = (byte) 0x0d;
             bytes[3] = (byte) 0x0a;
-            if (id <= 3) {
-                bytes[0] = (byte) 0x58;
-            }
-            else if (id <= 6) {
-                bytes[0] = (byte) 0x59;
-            }
-            else {
-                bytes[0] = (byte) 0x56;
-            }
-
-            if (id % 3 == 2) {
-                bytes[1] = (byte) 0x84;
-            }
-            else if (id % 3 == 0) {
-                bytes[1] = (byte) 0x86;
-            }
+            bytes[0] = (byte) 0x58;
             outWrite(bytes);
         }
 
@@ -297,11 +268,11 @@ public class WiFiConnectService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(BroadcastUtil.ACTION_RECEIVE_DATA)) {
-                    int id = intent.getIntExtra("ID", 1);
+                    int id = intent.getIntExtra("ID", 7);
                     receiveData(id);
                 }
                 else if (intent.getAction().equals(BroadcastUtil.ACTION_STOP_DATA)) {
-                    int id = intent.getIntExtra("ID", 1);
+                    int id = intent.getIntExtra("ID", 7);
                     stopData(id);
                 }
             }

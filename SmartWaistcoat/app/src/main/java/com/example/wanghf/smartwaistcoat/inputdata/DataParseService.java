@@ -77,9 +77,9 @@ public class DataParseService extends Service {
             while (!interrupted()) {
 
 //                i++;
-//                BroadcastUtil.updateECG(context, i);
+//                BroadcastUtil.updateECG(context,(int) -(Math.random() * 10000));
 //                try {
-//                    Thread.sleep(5);
+//                    Thread.sleep(4);
 //                } catch (Exception e) {
 //                    break;
 //                }
@@ -194,6 +194,9 @@ public class DataParseService extends Service {
             }
         }
 
+        /**
+         * 显示数据
+         */
         private void dataParse1(byte[] buffer) {
             if (buffer.length < 7) {
                 return;
@@ -216,6 +219,10 @@ public class DataParseService extends Service {
             BroadcastUtil.updateDataTable(context, waistcoatData.clone());
         }
 
+        /**
+         * ECG
+         * @param buffer
+         */
         private void dataParse2(byte[] buffer) {
             if (buffer.length < 15) {
                 return;
@@ -259,6 +266,10 @@ public class DataParseService extends Service {
 //            fileUtil.write2SDFromInputString(dir, "data.txt", data1 + "\n" + data2 + "\n" + data3 + "\n" + data4 + "\n");
         }
 
+        /**
+         * SPO2
+         * @param buffer
+         */
         private void dataParse3(byte[] buffer) {
             if (buffer.length < 15) {
                 return;
@@ -272,14 +283,14 @@ public class DataParseService extends Service {
                 head[i] = (buffer[1] >> (i - 6)) & 0x1;
             }
 
-            int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 * 256 +
-                    ((buffer[3] & 0x7f) + 128 * head[4]) * 256 + (buffer[4] & 0x7f) + 128 * head[3];
-            int data2 = ((buffer[5] & 0x7f) + head[2] * 128) * 256 * 256 +
-                    ((buffer[6] & 0x7f) + 128 * head[1]) * 256 + (buffer[7] & 0x7f) + 128 * head[0];
-            int data3 = ((buffer[11] & 0x7f) + head[8] * 128) * 256 * 256 +
-                    ((buffer[9] & 0x7f) + 128 * head[10]) * 256 + (buffer[10] & 0x7f) + 128 * head[9];
-            int data4 = ((buffer[11] & 0x7f) + head[8] * 128) * 256 * 256 +
-                    ((buffer[12] & 0x7f) + 128 * head[7]) * 256 + (buffer[13] & 0x7f) + 128 * head[6];
+            int data1 = ((buffer[2] & 0x7f) + head[0] * 128) * 256 * 256 +
+                    ((buffer[3] & 0x7f) + 128 * head[1]) * 256 + (buffer[4] & 0x7f) + 128 * head[2];
+            int data2 = ((buffer[5] & 0x7f) + head[3] * 128) * 256 * 256 +
+                    ((buffer[6] & 0x7f) + 128 * head[4]) * 256 + (buffer[7] & 0x7f) + 128 * head[5];
+            int data3 = ((buffer[8] & 0x7f) + head[6] * 128) * 256 * 256 +
+                    ((buffer[9] & 0x7f) + 128 * head[7]) * 256 + (buffer[10] & 0x7f) + 128 * head[8];
+            int data4 = ((buffer[11] & 0x7f) + head[9] * 128) * 256 * 256 +
+                    ((buffer[12] & 0x7f) + 128 * head[10]) * 256 + (buffer[13] & 0x7f) + 128 * head[11];
 
             BroadcastUtil.updateImpedance(context, data1);
             BroadcastUtil.updateImpedance(context, data2);
@@ -287,6 +298,10 @@ public class DataParseService extends Service {
             BroadcastUtil.updateImpedance(context, data4);
         }
 
+        /**
+         * Gsens
+         * @param buffer
+         */
         private void dataParse4(byte[] buffer) {
             if (buffer.length < 15) {
                 return;
@@ -300,21 +315,20 @@ public class DataParseService extends Service {
                 head[i] = (buffer[1] >> (i - 6)) & 0x1;
             }
 
-            int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 + (buffer[3] & 0x7f) + 128 * head[4];
-            int data2 = ((buffer[4] & 0x7f) + head[3] * 128) * 256 + (buffer[5] & 0x7f) + 128 * head[2];
-            int data3 = ((buffer[6] & 0x7f) + head[1] * 128) * 256 + (buffer[7] & 0x7f) + 128 * head[0];
-            int data4 = ((buffer[8] & 0x7f) + head[11] * 128) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
-            int data5 = ((buffer[10] & 0x7f) + head[9] * 128) * 256 + (buffer[11] & 0x7f) + 128 * head[8];
-            int data6 = ((buffer[12] & 0x7f) + head[7] * 128) * 256 + (buffer[13] & 0x7f) + 128 * head[6];
-
-            BroadcastUtil.updateStrike(context, data1);
-            BroadcastUtil.updateStrike(context, data2);
-            BroadcastUtil.updateStrike(context, data3);
-            BroadcastUtil.updateStrike(context, data4);
-            BroadcastUtil.updateStrike(context, data5);
-            BroadcastUtil.updateStrike(context, data6);
+            for (int i = 1; i <= 6; i++) {
+                int data = ((buffer[2 * i] & 0x7f) + head[2*i - 2] * 128) * 256 +
+                        (buffer[2 * i + 1] & 0x7f) + 128 * head[2 * i - 1];
+                if (data > 32768) {
+                    data -= 65536;
+                }
+                BroadcastUtil.updateStrike(context, data);
+            }
         }
 
+        /**
+         * PRESS
+         * @param buffer
+         */
         private void dataParse5(byte[] buffer) {
             if (buffer.length < 15) {
                 return;
@@ -331,11 +345,14 @@ public class DataParseService extends Service {
             int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 + (buffer[3] & 0x7f) + 128 * head[4];
             int data2 = ((buffer[8] & 0x7f) + head[11] * 128) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
 
-
             BroadcastUtil.updateStrike(context, data1);
             BroadcastUtil.updateStrike(context, data2);
         }
 
+        /**
+         * 阻抗
+         * @param buffer
+         */
         private void dataParse6(byte[] buffer) {
             if (buffer.length < 15) {
                 return;
@@ -349,15 +366,15 @@ public class DataParseService extends Service {
                 head[i] = (buffer[1] >> (i - 6)) & 0x1;
             }
 
-            int data1 = ((buffer[2] & 0x7f) + head[5] * 256) * 256 * 256 * 256 +
-                    ((buffer[3] & 0x7f) + 256 * head[4]) * 256 * 256 +
-                    ((buffer[4] & 0x7f) + 256 * head[3]) * 256 + (buffer[5] & 127) + 256 * head[2];
-            int data2 = ((buffer[6] & 0x7f) + head[1] * 256) * 256 * 256 * 256 +
-                    ((buffer[7] & 0x7f) + 256 * head[0]) * 256 * 256 +
-                    ((buffer[8] & 0x7f) + 256 * head[11]) * 256 + (buffer[9] & 0x7f) + 256 * head[10];
-            int data3 = ((buffer[10] & 0x7f) + head[9] * 256) * 256 * 256 * 256 +
-                    ((buffer[11] & 0x7f) + 256 * head[8]) * 256 * 256 +
-                    ((buffer[12] & 0x7f) + 256 * head[7]) * 256 + (buffer[13] & 0x7f) + 256 * head[6];
+            int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 * 256 * 256 +
+                    ((buffer[3] & 0x7f) + 128 * head[4]) * 256 * 256 +
+                    ((buffer[4] & 0x7f) + 128 * head[3]) * 256 + (buffer[5] & 127) + 128 * head[2];
+            int data2 = ((buffer[6] & 0x7f) + head[1] * 128) * 256 * 256 * 256 +
+                    ((buffer[7] & 0x7f) + 128 * head[0]) * 256 * 256 +
+                    ((buffer[8] & 0x7f) + 128 * head[11]) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
+            int data3 = ((buffer[10] & 0x7f) + head[9] * 128) * 256 * 256 * 256 +
+                    ((buffer[11] & 0x7f) + 128 * head[8]) * 256 * 256 +
+                    ((buffer[12] & 0x7f) + 128 * head[7]) * 256 + (buffer[13] & 0x7f) + 128 * head[6];
 
             BroadcastUtil.updateImpedance(context, data1);
             BroadcastUtil.updateImpedance(context, data2);

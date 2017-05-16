@@ -133,14 +133,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/linear_curve">
-            <com.androidplot.xy.XYPlot
+            android:id="@+id/linear_curve"
+            android:background="@color/ap_black">
+            <com.example.wanghf.smartwaistcoat.widget.EcgView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:id="@+id/main_plot_ecg"
-                ap:paddingLeft="10dp"
-                style="@style/APDefacto.Dark"/>
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"/>
 
             <com.androidplot.xy.XYPlot
                 android:layout_width="match_parent"

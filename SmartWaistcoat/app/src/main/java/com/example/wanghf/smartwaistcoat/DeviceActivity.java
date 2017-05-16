@@ -42,9 +42,8 @@ public class DeviceActivity extends Activity {
                 .replace(android.R.id.content, new DeviceFragment())
                 .commit();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("device", MODE_PRIVATE);
-        String a = sharedPreferences.getString("device_ip", "no");
-        Log.i("DEVICE", a);
+//        SharedPreferences sharedPreferences = getSharedPreferences("device", MODE_PRIVATE);
+//        String a = sharedPreferences.getString("device_ip", "no");
+//        Log.i("DEVICE", a);
     }
-
 }
