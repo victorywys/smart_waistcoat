@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 
 import com.example.wanghf.myapplication.R;
 
+import java.net.PortUnreachableException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -27,7 +28,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Context mContext;
     private SurfaceHolder surfaceHolder;
-    public static boolean isRunning;
+    public  boolean isRunning;
     private Canvas mCanvas;
 
     private float ecgMax = 10000;//心电的最大值
@@ -37,8 +38,8 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private float lockWidth;//每次锁屏需要画的
     private int ecgPerCount = 4;//每次画心电数据的个数，心电每秒有500个数据包
 
-    private static Queue<Integer> ecg0Datas = new LinkedList<Integer>();
-    private static Queue<Integer> ecg1Datas = new LinkedList<Integer>();
+    private Queue<Integer> ecg0Datas = new LinkedList<Integer>();
+//    private Queue<Integer> ecg1Datas = new LinkedList<Integer>();
 
     private Paint mPaint;//画波形图的画笔
     private int mWidth;//控件宽度
@@ -208,29 +209,29 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     /**
      * 画波2
      */
-    private void drawWave1(){
-        try{
-            float mStartX = startX;
-            if(ecg1Datas.size() > ecgPerCount){
-                for(int i=0;i<ecgPerCount;i++){
-                    float newX = (float) (mStartX + ecgXOffset);
-                    int newY = ecgConver(ecg1Datas.poll()) + yOffset1;
-                    mCanvas.drawLine(mStartX, startY1, newX, newY, mPaint);
-                    mStartX = newX;
-                    startY1 = newY;
-                }
-            }else{
-                /**
-                 * 如果没有数据
-                 * 因为有数据一次画ecgPerCount个数，那么无数据时候就应该画ecgPercount倍数长度的中线
-                 */
-                int newX = (int) (mStartX + ecgXOffset * ecgPerCount);
-                int newY = ecgConver((int) (ecgMax / 2)) + yOffset1;
-                mCanvas.drawLine(mStartX, startY1, newX, newY, mPaint);
-                startY1 = newY;
-            }
-        }catch (NoSuchElementException e){}
-    }
+//    private void drawWave1(){
+//        try{
+//            float mStartX = startX;
+//            if(ecg1Datas.size() > ecgPerCount){
+//                for(int i=0;i<ecgPerCount;i++){
+//                    float newX = (float) (mStartX + ecgXOffset);
+//                    int newY = ecgConver(ecg1Datas.poll()) + yOffset1;
+//                    mCanvas.drawLine(mStartX, startY1, newX, newY, mPaint);
+//                    mStartX = newX;
+//                    startY1 = newY;
+//                }
+//            }else{
+//                /**
+//                 * 如果没有数据
+//                 * 因为有数据一次画ecgPerCount个数，那么无数据时候就应该画ecgPercount倍数长度的中线
+//                 */
+//                int newX = (int) (mStartX + ecgXOffset * ecgPerCount);
+//                int newY = ecgConver((int) (ecgMax / 2)) + yOffset1;
+//                mCanvas.drawLine(mStartX, startY1, newX, newY, mPaint);
+//                startY1 = newY;
+//            }
+//        }catch (NoSuchElementException e){}
+//    }
 
     /**
      * 将心电数据转换成用于显示的Y坐标
@@ -243,12 +244,16 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         return data;
     }
 
-    public static void addEcgData0(int data){
+    public void addEcgData0(int data){
         ecg0Datas.add(data);
     }
 
-    public static void addEcgData1(int data){
-        ecg1Datas.add(data);
+    public void setEcgMax(int max) {
+        ecgMax = max;
     }
+
+//    public static void addEcgData1(int data){
+//        ecg1Datas.add(data);
+//    }
 
 }

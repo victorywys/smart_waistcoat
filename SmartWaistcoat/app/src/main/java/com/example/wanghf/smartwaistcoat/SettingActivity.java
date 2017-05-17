@@ -2,7 +2,9 @@ package com.example.wanghf.smartwaistcoat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +25,15 @@ public class SettingActivity extends Activity {
         setContentView(R.layout.setting);
 
         textView = (TextView) findViewById(R.id.text_connect_state);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPreferences.getBoolean("connect_state", false)) {
+            textView.setText("连接状态: 未连接");
+        }
+        else {
+            textView.setText("连接状态: 已连接");
+        }
+
     }
 
     /**

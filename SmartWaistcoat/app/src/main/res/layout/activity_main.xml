@@ -138,26 +138,50 @@
             <com.example.wanghf.smartwaistcoat.widget.EcgView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:id="@+id/ecg_view_up"
                 android:layout_weight="1"
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"/>
 
-            <com.androidplot.xy.XYPlot
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                ap:marginLeft="10dp"
-                style="@style/APDefacto.Dark"
-                android:id="@+id/main_plot_impulse" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_plot_up"
+                android:text="ECG"
+                android:layout_gravity="center"
+                android:textColor="@color/ap_white"/>
 
-            <com.androidplot.xy.XYPlot
+            <com.example.wanghf.smartwaistcoat.widget.EcgView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                ap:titleTextSize="0sp"
-                ap:marginLeft="10dp"
-                android:id="@+id/main_plot_strike"
-                style="@style/APDefacto.Dark"/>
+                android:id="@+id/ecg_view_mid"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_plot_mid"
+                android:text="SP02"
+                android:textColor="@color/ap_white"
+                android:layout_gravity="center"/>
+
+            <com.example.wanghf.smartwaistcoat.widget.EcgView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/ecg_view_down"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_plot_down"
+                android:text="GST-X"
+                android:layout_gravity="center"
+                android:textColor="@color/ap_white"/>
         </LinearLayout>
 
         <RelativeLayout

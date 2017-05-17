@@ -46,19 +46,19 @@ public class WiFiConnectService extends Service {
 
     private HashMap<Integer, byte[]> sourceMap = new HashMap<Integer, byte[]>() {
         {
-            sourceMap.put(1, new byte[]{(byte) 0x51, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(2, new byte[]{(byte) 0x52, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(3, new byte[]{(byte) 0x53, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(4, new byte[]{(byte) 0x54, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(5, new byte[]{(byte) 0x55, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(6, new byte[]{(byte) 0x56, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(1, new byte[]{(byte) 0x51, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(2, new byte[]{(byte) 0x52, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(3, new byte[]{(byte) 0x53, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(4, new byte[]{(byte) 0x54, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(5, new byte[]{(byte) 0x55, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(6, new byte[]{(byte) 0x56, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
 
-            sourceMap.put(7, new byte[]{(byte) 0x58, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(8, new byte[]{(byte) 0x58, (byte) 0x83, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(9, new byte[]{(byte) 0x58, (byte) 0x85, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(10, new byte[]{(byte) 0x59, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(11, new byte[]{(byte) 0x59, (byte) 0x83, (byte) 0x0d, (byte) 0x0a});
-            sourceMap.put(12, new byte[]{(byte) 0x59, (byte) 0x85, (byte) 0x0d, (byte) 0x0a});
+            put(7, new byte[]{(byte) 0x58, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(8, new byte[]{(byte) 0x58, (byte) 0x83, (byte) 0x0d, (byte) 0x0a});
+            put(9, new byte[]{(byte) 0x58, (byte) 0x85, (byte) 0x0d, (byte) 0x0a});
+            put(10, new byte[]{(byte) 0x59, (byte) 0x81, (byte) 0x0d, (byte) 0x0a});
+            put(11, new byte[]{(byte) 0x59, (byte) 0x83, (byte) 0x0d, (byte) 0x0a});
+            put(12, new byte[]{(byte) 0x59, (byte) 0x85, (byte) 0x0d, (byte) 0x0a});
         }
     };
 
@@ -102,21 +102,25 @@ public class WiFiConnectService extends Service {
         private Socket socket;
 
         public void run() {
-//            while (true) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            try {
+                socket = new Socket(InetAddress.getByName(IP), PORT);
+            } catch (Exception e) {
+                editor.putBoolean("connect_state", false);
+                editor.apply();
                 try {
-                    socket = new Socket(InetAddress.getByName(IP), PORT);
-                } catch (Exception e) {
-                    try {
-                        if (socket != null) {
-                            socket.close();
-                        }
-                    } catch (Exception ex) {
-                        return;
+                    if (socket != null) {
+                        socket.close();
                     }
+                } catch (Exception ex) {
+                    return;
                 }
-                connectedThread = new ConnectedThread(socket);
-                connectedThread.start();
-//            }
+            }
+            editor.putBoolean("connect_state", true);
+            editor.apply();
+            connectedThread = new ConnectedThread(socket);
+            connectedThread.start();
         }
 
         void cancel() {
@@ -167,7 +171,6 @@ public class WiFiConnectService extends Service {
                 try {
                     bufferLength = inputStream.read(buffer);
                 } catch (Exception e) {
-                    Log.i(TAG, "inputstream exception");
                     break;
                 }
                 if (bufferLength > 0) {
@@ -186,6 +189,10 @@ public class WiFiConnectService extends Service {
                     }
                 }
             }
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("connect_state", false);
+            editor.apply();
             cancel();
         }
 

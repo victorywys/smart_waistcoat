@@ -30,11 +30,11 @@ public class DataParseService extends Service {
     private ByteFifo byteFifo = null;
     private TranslateThread translateThread = null;
     private ByteUtil byteUtil = new ByteUtil();
-    private FileUtil fileUtil = new FileUtil();
-    private String dir = "AAA";
+
     private LinkedBlockingQueue<WaistcoatData> queue;
     private LinkedBlockingQueue<Byte> bytesQueue;
     private Context context;
+
 
     public void onCreate() {
         context = this;

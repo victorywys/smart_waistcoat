@@ -55,9 +55,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int HISTORY_SIZE = 50;
 
     // 画曲线相关
-    private XYPlot impulsePlot;
-    private XYPlot xinlvPlot;
-    private XYPlot strikePlot;
+//    private XYPlot impulsePlot;
+//    private XYPlot xinlvPlot;
+//    private XYPlot strikePlot;
+    private EcgView ecgViewUp;
+    private EcgView ecgViewMid;
+    private EcgView ecgViewDown;
     private SimpleXYSeries impulseSeries;
     private SimpleXYSeries ecgSeries;
     private SimpleXYSeries strikeSeries;
@@ -82,12 +85,11 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
 
     private List<Integer> datas = new ArrayList<Integer>();
-    private List<Integer> data1Datas = new ArrayList<Integer>();
-
     private Queue<Integer> data0Q = new LinkedList<Integer>();
-    private Queue<Integer> data1Q = new LinkedList<Integer>();
 
     private Redrawer redrawer;
+
+    private final int ECG_COUNT = 500;
 
     private HashMap<String, Integer> sourceMap = new HashMap<String, Integer>(){
         {
@@ -117,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
         initPlots();
 
-//        loadDatas();
-//        simulator();
+        loadDatas();
+        simulator();
     }
 
     @Override
@@ -154,9 +156,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initPlots() {
-        impulsePlot = (XYPlot) findViewById(R.id.main_plot_impulse);
-//        xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
-        strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
+//        impulsePlot = (XYPlot) findViewById(R.id.main_plot_impulse);
+////        xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
+//        strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
+
+        ecgViewUp = (EcgView) findViewById(R.id.ecg_view_up);
+        ecgViewMid = (EcgView) findViewById(R.id.ecg_view_mid);
+        ecgViewDown = (EcgView) findViewById(R.id.ecg_view_down);
 
         ecgSeries = new SimpleXYSeries("ECG");
         ecgSeries.useImplicitXVals();
@@ -167,16 +173,16 @@ public class MainActivity extends AppCompatActivity {
 
 //        xinlvPlot.addSeries(ecgSeries, new LineAndPointFormatter(
 //                Color.rgb(200, 100, 100), null, null, null));
-        impulsePlot.addSeries(impulseSeries, new LineAndPointFormatter(
-                Color.rgb(100, 100, 200), null, null, null));
-        strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
-                Color.rgb(150, 200, 100), null, null, null));
+//        impulsePlot.addSeries(impulseSeries, new LineAndPointFormatter(
+//                Color.rgb(100, 100, 200), null, null, null));
+//        strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
+//                Color.rgb(150, 200, 100), null, null, null));
 
-        final PlotStatistics histStats = new PlotStatistics(10000, false);
-
-        impulsePlot.addListener(histStats);
-//        xinlvPlot.addListener(histStats);
-        strikePlot.addListener(histStats);
+//        final PlotStatistics histStats = new PlotStatistics(10000, false);
+//
+//        impulsePlot.addListener(histStats);
+////        xinlvPlot.addListener(histStats);
+//        strikePlot.addListener(histStats);
 
 //        redrawer = new Redrawer(
 //                Arrays.asList(new Plot[]{impulsePlot, strikePlot, xinlvPlot}),
@@ -296,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
-                EcgView.addEcgData0(data);
+                ecgViewUp.addEcgData0(data);
 //
 //                if (ecgSeries.size() > HISTORY_SIZE) {
 //                    ecgSeries.removeFirst();
@@ -373,11 +379,14 @@ public class MainActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(EcgView.isRunning){
+//                if(){
                     if(data0Q.size() > 0){
-                        EcgView.addEcgData0(data0Q.poll());
+                        int data = data0Q.poll();
+                        ecgViewUp.addEcgData0(data);
+                        ecgViewMid.addEcgData0(data);
+                        ecgViewDown.addEcgData0(data);
                     }
-                }
+//                }
             }
         }, 0, 4);
     }
@@ -396,7 +405,16 @@ public class MainActivity extends AppCompatActivity {
                 datas.add(Integer.parseInt(str));
             }
 
+            int curAvg = 0;
+            for (int i = 0; i < ECG_COUNT; i++) {
+                curAvg = (curAvg * i + datas.get(i)) / (i + 1);
+            }
+            ecgViewUp.setEcgMax(curAvg * 2);
+            ecgViewMid.setEcgMax(curAvg * 2);
+            ecgViewDown.setEcgMax(curAvg * 2);
+
             data0Q.addAll(datas);
+
         }catch (Exception e){}
 
     }
