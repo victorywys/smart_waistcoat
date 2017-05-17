@@ -62,6 +62,24 @@ public class WiFiConnectService extends Service {
         }
     };
 
+    private HashMap<Integer, byte[]> stopMap = new HashMap<Integer, byte[]>() {
+        {
+            put(1, new byte[]{(byte) 0x51, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(2, new byte[]{(byte) 0x52, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(3, new byte[]{(byte) 0x53, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(4, new byte[]{(byte) 0x54, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(5, new byte[]{(byte) 0x55, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(6, new byte[]{(byte) 0x56, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+
+            put(7, new byte[]{(byte) 0x58, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(8, new byte[]{(byte) 0x58, (byte) 0x84, (byte) 0x0d, (byte) 0x0a});
+            put(9, new byte[]{(byte) 0x58, (byte) 0x86, (byte) 0x0d, (byte) 0x0a});
+            put(10, new byte[]{(byte) 0x59, (byte) 0x82, (byte) 0x0d, (byte) 0x0a});
+            put(11, new byte[]{(byte) 0x59, (byte) 0x84, (byte) 0x0d, (byte) 0x0a});
+            put(12, new byte[]{(byte) 0x59, (byte) 0x86, (byte) 0x0d, (byte) 0x0a});
+        }
+    };
+
     public static Thread heartBeatThread = null;
 
     /**
@@ -249,7 +267,7 @@ public class WiFiConnectService extends Service {
         }
 
         private void stopData(int id) {
-            outWrite(sourceMap.get(id));
+            outWrite(stopMap.get(id));
         }
 
         void cancel() {

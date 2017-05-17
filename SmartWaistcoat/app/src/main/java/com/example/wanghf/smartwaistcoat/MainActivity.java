@@ -87,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
     private final int PRESS_COUNT = 10;
     private final int ZUKANG_COUNT = 1;
 
+    private int currentECG;
+    private int currentImpedance;
+    private int currentStrike;
+    private double avgECG;
+    private double avgImpedance;
+    private double avgStrike;
+
     private HashMap<String, Integer> sourceMap = new HashMap<String, Integer>(){
         {
             put("心电测量", 1);
@@ -115,14 +122,22 @@ public class MainActivity extends AppCompatActivity {
 
         initPlots();
 
-        loadDatas();
-        simulator();
+//        loadDatas();
+//        simulator();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mainController.onResume();
+
+        currentECG = 0;
+        currentImpedance = 0;
+        currentStrike = 0;
+
+        avgECG = 0;
+        avgImpedance = 0;
+        avgStrike = 0;
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
@@ -249,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int id = sourceMap.get(sharedPreferences.getString("source_id", "组合包1"));
+        int id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
         // 停止数据
         if (showingTable) {
             BroadcastUtil.stopData(context, id);
@@ -281,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int id = sourceMap.get(sharedPreferences.getString("source_id", "组合包1"));
+        int id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
 
         // 停止
         if (showingCurve) {
@@ -338,6 +353,15 @@ public class MainActivity extends AppCompatActivity {
             // 心电
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
+                if (currentECG < ECG_COUNT) {
+                    avgECG = (currentECG * avgECG + data) / (++currentECG);
+                    return;
+                }
+                else if (currentECG == ECG_COUNT) {
+                    ecgViewUp.setEcgMax(2 * avgECG);
+                    currentECG++;
+                }
+
                 ecgViewUp.addEcgData0(data);
 
                 Log.i(TAG, "ecg" + data);
@@ -346,6 +370,14 @@ public class MainActivity extends AppCompatActivity {
             // SPO2，阻抗，压力
             if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
                 int data = intent.getIntExtra("IMPEDANCE", 0);
+                if (currentImpedance < SPO_COUNT) {
+                    avgImpedance = (currentImpedance * avgImpedance + data) / (++currentImpedance);
+                    return;
+                }
+                else if (currentImpedance == SPO_COUNT) {
+                    ecgViewMid.setEcgMax(avgImpedance * 2);
+                    currentImpedance++;
+                }
                 ecgViewMid.addEcgData0(data);
 
                 Log.i(TAG, "IMPEDANCE" + data);
@@ -354,7 +386,15 @@ public class MainActivity extends AppCompatActivity {
             // Gsenso
             if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
                 int data = intent.getIntExtra("STRIKE", 0);
-                ecgViewMid.addEcgData0(data);
+                if (currentStrike < GSEN_COUNT) {
+                    avgStrike = (currentStrike * avgStrike + data) / (++currentStrike);
+                    return;
+                }
+                else if (currentStrike == SPO_COUNT) {
+                    ecgViewDown.setEcgMax(avgStrike * 2);
+                    currentStrike++;
+                }
+                ecgViewDown.addEcgData0(data);
 
                 Log.i(TAG, "STRIKE" + data);
             }

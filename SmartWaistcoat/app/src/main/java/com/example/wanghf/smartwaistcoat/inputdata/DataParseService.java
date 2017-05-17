@@ -70,7 +70,7 @@ public class DataParseService extends Service {
         private byte[] dataItem = new byte[64];
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String sourceID = sharedPreferences.getString("source_id", "组合包1");
+        String sourceID = sharedPreferences.getString("data_source", "组合包1");
 
         public void run() {
             int i = 0;
@@ -306,7 +306,19 @@ public class DataParseService extends Service {
             }
 
             if (sourceID.equals("G-senso测量")) {
+                for (int i = 0; i < 2; i++) {
+                    int data1 = ((buffer[6 * i + 2] & 0x7f) + head[6 * i] * 128) * 256 +
+                            (buffer[6 * i + 3] & 0x7f) + 128 * head[6 * i + 1];
+                    BroadcastUtil.updateECG(context, data1);
 
+                    int data2 = ((buffer[6 * i + 4] & 0x7f) + head[6 * i + 2] * 128) * 256 +
+                            (buffer[6 * i + 5] & 0x7f) + 128 * head[6 * i + 3];
+                    BroadcastUtil.updateImpedance(context, data2);
+
+                    int data3 = ((buffer[6 * i + 6] & 0x7f) + head[6 * i + 4] * 128) * 256 +
+                            (buffer[6 * i + 7] & 0x7f) + 128 * head[6 * i + 5];
+                    BroadcastUtil.updateStrike(context, data3);
+                }
             }
             else {
                 for (int i = 1; i <= 6; i++) {

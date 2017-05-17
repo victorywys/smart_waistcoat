@@ -31,7 +31,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     public  boolean isRunning;
     private Canvas mCanvas;
 
-    private float ecgMax = 10000;//心电的最大值
+    private double ecgMax = 10000;//心电的最大值
     private String bgColor = "#000000";
     private int wave_speed = 25;//波速: 25mm/s
     private int sleepTime = 8; //每次锁屏的时间间距，单位:ms
@@ -43,7 +43,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private Paint mPaint;//画波形图的画笔
     private int mWidth;//控件宽度
     private int mHeight;//控件高度
-    private float ecgYRatio;
+    private double ecgYRatio;
     private int startY0;
     private Rect rect;
 
@@ -189,10 +189,10 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
                  * 如果没有数据
                  * 因为有数据一次画ecgPerCount个数，那么无数据时候就应该画ecgPercount倍数长度的中线
                  */
-                int newX = (int) (mStartX + ecgXOffset * ecgPerCount);
-                int newY = ecgConver((int) (ecgMax / 2));
-                mCanvas.drawLine(mStartX, startY0, newX, newY, mPaint);
-                startY0 = newY;
+//                int newX = (int) (mStartX + ecgXOffset * ecgPerCount);
+//                int newY = ecgConver((int) (ecgMax / 2));
+//                mCanvas.drawLine(mStartX, startY0, newX, newY, mPaint);
+//                startY0 = newY;
             }
         }catch (NoSuchElementException e){
             e.printStackTrace();
@@ -214,7 +214,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         ecg0Datas.add(data);
     }
 
-    public void setEcgMax(int max) {
+    public void setEcgMax(double max) {
         ecgMax = max;
     }
 
