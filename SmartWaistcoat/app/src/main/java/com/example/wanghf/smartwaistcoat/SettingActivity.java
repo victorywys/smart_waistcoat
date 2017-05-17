@@ -28,10 +28,10 @@ public class SettingActivity extends Activity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPreferences.getBoolean("connect_state", false)) {
-            textView.setText("连接状态: 未连接");
+            textView.setText("连接状态: 已连接");
         }
         else {
-            textView.setText("连接状态: 已连接");
+            textView.setText("连接状态: 未连接");
         }
 
     }

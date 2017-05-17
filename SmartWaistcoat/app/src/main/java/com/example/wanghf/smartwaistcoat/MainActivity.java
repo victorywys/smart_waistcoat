@@ -52,18 +52,12 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private static final int HISTORY_SIZE = 50;
-
-    // 画曲线相关
-//    private XYPlot impulsePlot;
-//    private XYPlot xinlvPlot;
-//    private XYPlot strikePlot;
     private EcgView ecgViewUp;
     private EcgView ecgViewMid;
     private EcgView ecgViewDown;
-    private SimpleXYSeries impulseSeries;
-    private SimpleXYSeries ecgSeries;
-    private SimpleXYSeries strikeSeries;
+    private TextView textViewPlotUp;
+    private TextView textViewPlotMid;
+    private TextView textViewPlotDown;
 
     private TextView textViewDianliang;
     private TextView textViewxueyang;
@@ -87,9 +81,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Integer> datas = new ArrayList<Integer>();
     private Queue<Integer> data0Q = new LinkedList<Integer>();
 
-    private Redrawer redrawer;
-
-    private final int ECG_COUNT = 500;
+    private final int ECG_COUNT = 250;
+    private final int SPO_COUNT = 250;
+    private final int GSEN_COUNT = 100;
+    private final int PRESS_COUNT = 10;
+    private final int ZUKANG_COUNT = 1;
 
     private HashMap<String, Integer> sourceMap = new HashMap<String, Integer>(){
         {
@@ -128,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mainController.onResume();
 
-//        redrawer.start();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
         intentFilter.addAction(BroadcastUtil.ACTION_SEND_MESSAGE);
@@ -144,49 +138,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-//        redrawer.pause();
-
         LocalBroadcastManager.getInstance(context).unregisterReceiver(myReceiver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        redrawer.finish();
     }
 
     private void initPlots() {
-//        impulsePlot = (XYPlot) findViewById(R.id.main_plot_impulse);
-////        xinlvPlot = (XYPlot) findViewById(R.id.main_plot_ecg);
-//        strikePlot = (XYPlot) findViewById(R.id.main_plot_strike);
 
         ecgViewUp = (EcgView) findViewById(R.id.ecg_view_up);
         ecgViewMid = (EcgView) findViewById(R.id.ecg_view_mid);
         ecgViewDown = (EcgView) findViewById(R.id.ecg_view_down);
 
-        ecgSeries = new SimpleXYSeries("ECG");
-        ecgSeries.useImplicitXVals();
-        impulseSeries = new SimpleXYSeries("SPO2");
-        impulseSeries.useImplicitXVals();
-        strikeSeries = new SimpleXYSeries("GST");
-        strikeSeries.useImplicitXVals();
-
-//        xinlvPlot.addSeries(ecgSeries, new LineAndPointFormatter(
-//                Color.rgb(200, 100, 100), null, null, null));
-//        impulsePlot.addSeries(impulseSeries, new LineAndPointFormatter(
-//                Color.rgb(100, 100, 200), null, null, null));
-//        strikePlot.addSeries(strikeSeries, new LineAndPointFormatter(
-//                Color.rgb(150, 200, 100), null, null, null));
-
-//        final PlotStatistics histStats = new PlotStatistics(10000, false);
-//
-//        impulsePlot.addListener(histStats);
-////        xinlvPlot.addListener(histStats);
-//        strikePlot.addListener(histStats);
-
-//        redrawer = new Redrawer(
-//                Arrays.asList(new Plot[]{impulsePlot, strikePlot, xinlvPlot}),
-//                250, false);
+        textViewPlotUp = (TextView) findViewById(R.id.text_plot_up);
+        textViewPlotMid = (TextView) findViewById(R.id.text_plot_mid);
+        textViewPlotDown = (TextView) findViewById(R.id.text_plot_down);
 
         // 按钮
         buttonDisplayCurve = (ImageButton) findViewById(R.id.button_switch_display);
@@ -196,6 +164,73 @@ public class MainActivity extends AppCompatActivity {
         textViewWendu = (TextView) findViewById(R.id.text_num_wendu);
         textViewXinlv = (TextView) findViewById(R.id.text_num_xinlv);
         textViewxueyang = (TextView) findViewById(R.id.text_num_xueyangzhi);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        switch (sharedPreferences.getString("data_source", "组合包1")) {
+            case "心电测量":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("");
+                textViewPlotDown.setText("");
+                break;
+            case "血氧测量":
+                textViewPlotUp.setText("");
+                textViewPlotMid.setText("SPO2");
+                textViewPlotDown.setText("");
+                break;
+            case "G-senso测量":
+                textViewPlotUp.setText("GST-X");
+                textViewPlotMid.setText("GST-Y");
+                textViewPlotDown.setText("GST-Z");
+                break;
+            case "压力测量":
+                textViewPlotUp.setText("");
+                textViewPlotMid.setText("压力");
+                textViewPlotDown.setText("");
+                break;
+            case "阻抗测量":
+                textViewPlotUp.setText("");
+                textViewPlotMid.setText("阻抗");
+                textViewPlotDown.setText("");
+                break;
+            case "01包":
+                textViewPlotUp.setText("");
+                textViewPlotMid.setText("");
+                textViewPlotDown.setText("");
+                break;
+            case "组合包1":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("SPO2");
+                textViewPlotDown.setText("GST-X");
+                break;
+            case "组合包2":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("SPO2");
+                textViewPlotDown.setText("GST-Y");
+                break;
+            case "组合包3":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("SPO2");
+                textViewPlotDown.setText("GST-Z");
+                break;
+            case "组合包4":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("阻抗");
+                textViewPlotDown.setText("GST-X");
+                break;
+            case "组合包5":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("阻抗");
+                textViewPlotDown.setText("GST-Y");
+                break;
+            case "组合包6":
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("阻抗");
+                textViewPlotDown.setText("GST-Z");
+                break;
+            default:
+
+                break;
+        }
     }
 
     /**
@@ -300,43 +335,28 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "tables");
             }
 
+            // 心电
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
                 ecgViewUp.addEcgData0(data);
-//
-//                if (ecgSeries.size() > HISTORY_SIZE) {
-//                    ecgSeries.removeFirst();
-//                }
-//
-//                ecgSeries.addLast(null, data);
-//
+
                 Log.i(TAG, "ecg" + data);
             }
 
-            if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
-//                int data = intent.getIntExtra("STRIKE", 0);
-//
-//                if (strikeSeries.size() > HISTORY_SIZE) {
-//                    strikeSeries.removeFirst();
-//                }
-//
-//                strikeSeries.addLast(null, data);
-//
-//                strikeSeries.setTitle("GST");
-//                Log.i(TAG, "strike" + data);
+            // SPO2，阻抗，压力
+            if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
+                int data = intent.getIntExtra("IMPEDANCE", 0);
+                ecgViewMid.addEcgData0(data);
+
+                Log.i(TAG, "IMPEDANCE" + data);
             }
 
-            if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
-//                int data = intent.getIntExtra("IMPEDANCE", 0);
-//
-//                if (impulseSeries.size() > HISTORY_SIZE) {
-//                    impulseSeries.removeFirst();
-//                }
-//
-//                impulseSeries.addLast(null, data);
-//                impulseSeries.setTitle("阻抗");
-//
-//                Log.i(TAG, "impedance" + data);
+            // Gsenso
+            if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
+                int data = intent.getIntExtra("STRIKE", 0);
+                ecgViewMid.addEcgData0(data);
+
+                Log.i(TAG, "STRIKE" + data);
             }
         }
     };
@@ -379,14 +399,12 @@ public class MainActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-//                if(){
-                    if(data0Q.size() > 0){
-                        int data = data0Q.poll();
-                        ecgViewUp.addEcgData0(data);
-                        ecgViewMid.addEcgData0(data);
-                        ecgViewDown.addEcgData0(data);
-                    }
-//                }
+                if(data0Q.size() > 0){
+                    int data = data0Q.poll();
+                    ecgViewUp.addEcgData0(data);
+                    ecgViewMid.addEcgData0(data);
+                    ecgViewDown.addEcgData0(data);
+                }
             }
         }, 0, 4);
     }

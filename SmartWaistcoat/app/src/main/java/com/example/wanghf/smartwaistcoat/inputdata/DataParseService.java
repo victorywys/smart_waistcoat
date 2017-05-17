@@ -69,13 +69,12 @@ public class DataParseService extends Service {
         private int state = noneHead;
         private byte[] dataItem = new byte[64];
 
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        int sourceID = sharedPreferences.getInt("source_id", 1);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String sourceID = sharedPreferences.getString("source_id", "组合包1");
 
         public void run() {
             int i = 0;
             while (!interrupted()) {
-
 //                i++;
 //                BroadcastUtil.updateECG(context,(int) -(Math.random() * 10000));
 //                try {
@@ -251,19 +250,10 @@ public class DataParseService extends Service {
             data3 = data3 > tp ? (data3 - tp * 2) : data3;
             data4 = data4 > tp ? (data4 - tp * 2) : data4;
 
-//            int limit = 1500;
-//
-//            if (Math.abs(data1) > limit || Math.abs(data2) > limit || Math.abs(data3) > limit
-//                    || Math.abs(data4) > limit) {
-//                return;
-//            }
-
             BroadcastUtil.updateECG(context, data1);
             BroadcastUtil.updateECG(context, data2);
             BroadcastUtil.updateECG(context, data3);
             BroadcastUtil.updateECG(context, data4);
-
-//            fileUtil.write2SDFromInputString(dir, "data.txt", data1 + "\n" + data2 + "\n" + data3 + "\n" + data4 + "\n");
         }
 
         /**
@@ -315,14 +305,20 @@ public class DataParseService extends Service {
                 head[i] = (buffer[1] >> (i - 6)) & 0x1;
             }
 
-            for (int i = 1; i <= 6; i++) {
-                int data = ((buffer[2 * i] & 0x7f) + head[2*i - 2] * 128) * 256 +
-                        (buffer[2 * i + 1] & 0x7f) + 128 * head[2 * i - 1];
-                if (data > 32768) {
-                    data -= 65536;
-                }
-                BroadcastUtil.updateStrike(context, data);
+            if (sourceID.equals("G-senso测量")) {
+
             }
+            else {
+                for (int i = 1; i <= 6; i++) {
+                    int data = ((buffer[2 * i] & 0x7f) + head[2*i - 2] * 128) * 256 +
+                            (buffer[2 * i + 1] & 0x7f) + 128 * head[2 * i - 1];
+                    if (data > 32768) {
+                        data -= 65536;
+                    }
+                    BroadcastUtil.updateStrike(context, data);
+                }
+            }
+
         }
 
         /**
@@ -345,8 +341,8 @@ public class DataParseService extends Service {
             int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 + (buffer[3] & 0x7f) + 128 * head[4];
             int data2 = ((buffer[8] & 0x7f) + head[11] * 128) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
 
-            BroadcastUtil.updateStrike(context, data1);
-            BroadcastUtil.updateStrike(context, data2);
+            BroadcastUtil.updateImpedance(context, data1);
+            BroadcastUtil.updateImpedance(context, data2);
         }
 
         /**
