@@ -12,6 +12,9 @@ import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -24,6 +27,9 @@ public class MainController {
 
     private Context context;
     private LinkedBlockingQueue queue;
+    private LinkedBlockingQueue ecgQueue;
+    private LinkedBlockingQueue spoQueue;
+    private List<Integer> spoList;
     private ControllerThread controllerThread;
 
     private boolean alarmXinlv;
@@ -35,9 +41,12 @@ public class MainController {
     private boolean alarmDuanxin;
     private boolean alarmDianhua;
 
-    public MainController(Context context, LinkedBlockingQueue queue) {
+    private final double[] b = new double[]{1, 0.7 ,1};
+
+    public MainController(Context context, LinkedBlockingQueue queue, LinkedBlockingQueue ecgQueue) {
         this.context = context;
-        this.queue = queue;
+        this.spoQueue = queue;
+        this.ecgQueue = ecgQueue;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         alarmXinlv = sharedPreferences.getBoolean("xinlv", false);
         alarmWendu = sharedPreferences.getBoolean("wendu", false);
@@ -56,17 +65,51 @@ public class MainController {
 
     private class ControllerThread extends Thread implements Runnable {
         volatile boolean running = true;
+        int maxSpo = 0;
+        int minSpo = Integer.MAX_VALUE;
+        int maxEcg = Integer.MIN_VALUE;
         @Override
         public void run() {
-            queue.clear();
+//            queue.clear();
+            spoQueue.clear();
+            spoList = new ArrayList<>();
 
             while (ControllerThread.this.running) {
                 try {
-                    WaistcoatData waistcoatData = (WaistcoatData) queue.take();
+                    int spo = (int) spoQueue.poll();
+                    spoList.add(spo);
+                    int size = spoList.size();
+                    maxSpo = Integer.MIN_VALUE;
+                    minSpo = Integer.MAX_VALUE;
+
+                    for (int i = 0; i < size; i++) {
+                        if (spoList.get(i) > maxSpo) {
+                            maxSpo = spoList.get(i);
+                        }
+                        else if (spoList.get(i) < minSpo) {
+                            minSpo = spoList.get(i);
+                        }
+                    }
+
+                    if (spoList.size() >= 750) {
+                        spoList.remove(0);
+                    }
+                    BroadcastUtil.updateImpedance(context, spo, maxSpo, minSpo);
+//                    BroadcastUtil.updateECG(context, (int) ecgQueue.getFirst(), 0);
+
+//                    if (ecgQueue.size() >=  500) {
+//                        for (int i = 0; i < 500; i++) {
+////                            if ((int) ecgQueue.get(i) > maxEcg) {
+////                                maxEcg = ((int) ecgQueue.get(i) - maxEcg);
+////                            }
+//                            maxEcg += ((int)ecgQueue.get(i) - maxEcg) / (i + 1);
+//                        }
+//                        BroadcastUtil.updateECG(context, (int) ecgQueue.remove(), maxEcg * 3);
+//                    }
 
                 }
                 catch (Exception e) {
-                    Log.i(TAG, "controller exception!");
+                    Log.i(TAG, "controller exception!" + e.toString());
                 }
             }
         }
@@ -110,9 +153,10 @@ public class MainController {
     }
 
 
-    private WaistcoatData firFilter(WaistcoatData data) {
-        WaistcoatData outData = new WaistcoatData();
-        return outData;
+    private double firFilter(double in) {
+        double out = 0;
+        out = in * b[0];
+        return out;
     }
 
     /**

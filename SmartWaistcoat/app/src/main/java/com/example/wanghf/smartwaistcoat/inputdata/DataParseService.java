@@ -12,11 +12,9 @@ import android.util.Log;
 import com.example.wanghf.smartwaistcoat.MainApplication;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 import com.example.wanghf.smartwaistcoat.utils.ByteUtil;
-import com.example.wanghf.smartwaistcoat.utils.FileUtil;
 
 import java.util.Arrays;
-import java.util.Random;
-import java.util.StringTokenizer;
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +31,9 @@ public class DataParseService extends Service {
 
     private LinkedBlockingQueue<WaistcoatData> queue;
     private LinkedBlockingQueue<Byte> bytesQueue;
+    private LinkedBlockingQueue<Integer> ecgQueue;
+    private LinkedBlockingQueue<Integer> spoQueue;
+    private LinkedBlockingQueue<Integer> gsenQueue;
     private Context context;
 
 
@@ -44,6 +45,9 @@ public class DataParseService extends Service {
         if (queue == null) {
             queue = MainApplication.getQueue();
         }
+
+        spoQueue = MainApplication.getSpoQueue();
+        ecgQueue = MainApplication.getEcgQueue();
         if (bytesQueue == null) {
             bytesQueue = MainApplication.getBytes();
         }
@@ -215,6 +219,11 @@ public class DataParseService extends Service {
             waistcoatData.setWendu(((buffer[6] & 127) + 320) / 10);
 
             //更新数据表
+            try {
+                queue.put(waistcoatData.clone());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             BroadcastUtil.updateDataTable(context, waistcoatData.clone());
         }
 
@@ -250,10 +259,15 @@ public class DataParseService extends Service {
             data3 = data3 > tp ? (data3 - tp * 2) : data3;
             data4 = data4 > tp ? (data4 - tp * 2) : data4;
 
-            BroadcastUtil.updateECG(context, data1);
-            BroadcastUtil.updateECG(context, data2);
-            BroadcastUtil.updateECG(context, data3);
-            BroadcastUtil.updateECG(context, data4);
+            ecgQueue.offer(data1);
+            ecgQueue.offer(data2);
+            ecgQueue.offer(data3);
+            ecgQueue.offer(data4);
+
+//            BroadcastUtil.updateECG(context, data1);
+//            BroadcastUtil.updateECG(context, data2);
+//            BroadcastUtil.updateECG(context, data3);
+//            BroadcastUtil.updateECG(context, data4);
         }
 
         /**
@@ -275,17 +289,24 @@ public class DataParseService extends Service {
 
             int data1 = ((buffer[2] & 0x7f) + head[0] * 128) * 256 * 256 +
                     ((buffer[3] & 0x7f) + 128 * head[1]) * 256 + (buffer[4] & 0x7f) + 128 * head[2];
-            int data2 = ((buffer[5] & 0x7f) + head[3] * 128) * 256 * 256 +
-                    ((buffer[6] & 0x7f) + 128 * head[4]) * 256 + (buffer[7] & 0x7f) + 128 * head[5];
+//            int data2 = ((buffer[5] & 0x7f) + head[3] * 128) * 256 * 256 +
+//                    ((buffer[6] & 0x7f) + 128 * head[4]) * 256 + (buffer[7] & 0x7f) + 128 * head[5];
             int data3 = ((buffer[8] & 0x7f) + head[6] * 128) * 256 * 256 +
                     ((buffer[9] & 0x7f) + 128 * head[7]) * 256 + (buffer[10] & 0x7f) + 128 * head[8];
-            int data4 = ((buffer[11] & 0x7f) + head[9] * 128) * 256 * 256 +
-                    ((buffer[12] & 0x7f) + 128 * head[10]) * 256 + (buffer[13] & 0x7f) + 128 * head[11];
+//            int data4 = ((buffer[11] & 0x7f) + head[9] * 128) * 256 * 256 +
+//                    ((buffer[12] & 0x7f) + 128 * head[10]) * 256 + (buffer[13] & 0x7f) + 128 * head[11];
 
-            BroadcastUtil.updateImpedance(context, data1);
-            BroadcastUtil.updateImpedance(context, data2);
-            BroadcastUtil.updateImpedance(context, data3);
-            BroadcastUtil.updateImpedance(context, data4);
+//            try {
+                spoQueue.offer(data1);
+//                spoQueue.push(data2);
+                spoQueue.offer(data3);
+//                spoQueue.push(data4);
+
+
+//            BroadcastUtil.updateImpedance(context, data1);
+//            BroadcastUtil.updateImpedance(context, data2);
+//            BroadcastUtil.updateImpedance(context, data3);
+//            BroadcastUtil.updateImpedance(context, data4);
         }
 
         /**
@@ -309,11 +330,11 @@ public class DataParseService extends Service {
                 for (int i = 0; i < 2; i++) {
                     int data1 = ((buffer[6 * i + 2] & 0x7f) + head[6 * i] * 128) * 256 +
                             (buffer[6 * i + 3] & 0x7f) + 128 * head[6 * i + 1];
-                    BroadcastUtil.updateECG(context, data1);
+//                    BroadcastUtil.updateECG(context, data1);
 
                     int data2 = ((buffer[6 * i + 4] & 0x7f) + head[6 * i + 2] * 128) * 256 +
                             (buffer[6 * i + 5] & 0x7f) + 128 * head[6 * i + 3];
-                    BroadcastUtil.updateImpedance(context, data2);
+//                    BroadcastUtil.updateImpedance(context, data2);
 
                     int data3 = ((buffer[6 * i + 6] & 0x7f) + head[6 * i + 4] * 128) * 256 +
                             (buffer[6 * i + 7] & 0x7f) + 128 * head[6 * i + 5];
@@ -353,8 +374,8 @@ public class DataParseService extends Service {
             int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 + (buffer[3] & 0x7f) + 128 * head[4];
             int data2 = ((buffer[8] & 0x7f) + head[11] * 128) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
 
-            BroadcastUtil.updateImpedance(context, data1);
-            BroadcastUtil.updateImpedance(context, data2);
+//            BroadcastUtil.updateImpedance(context, data1);
+//            BroadcastUtil.updateImpedance(context, data2);
         }
 
         /**
@@ -384,9 +405,9 @@ public class DataParseService extends Service {
                     ((buffer[11] & 0x7f) + 128 * head[8]) * 256 * 256 +
                     ((buffer[12] & 0x7f) + 128 * head[7]) * 256 + (buffer[13] & 0x7f) + 128 * head[6];
 
-            BroadcastUtil.updateImpedance(context, data1);
-            BroadcastUtil.updateImpedance(context, data2);
-            BroadcastUtil.updateImpedance(context, data3);
+//            BroadcastUtil.updateImpedance(context, data1);
+//            BroadcastUtil.updateImpedance(context, data2);
+//            BroadcastUtil.updateImpedance(context, data3);
         }
 
     }

@@ -13,6 +13,7 @@ import com.example.wanghf.smartwaistcoat.inputdata.DataParseService;
 import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
 import com.example.wanghf.smartwaistcoat.inputdata.WiFiConnectService;
 
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -24,6 +25,8 @@ public class MainApplication extends Application {
 
     private static LinkedBlockingQueue<Byte> bytes = null;
     private static LinkedBlockingQueue<WaistcoatData> queue = null;
+    private static LinkedBlockingQueue<Integer> spoQueue = null;
+    private static LinkedBlockingQueue<Integer> ecgQueue = null;
     private WiFiConnectService wiFiConnectService;
     private DataParseService dataParseService;
 
@@ -36,6 +39,9 @@ public class MainApplication extends Application {
         if (queue == null) {
             queue = new LinkedBlockingQueue<>();
         }
+
+        spoQueue = new LinkedBlockingQueue<>();
+        ecgQueue = new LinkedBlockingQueue<>();
 
         if (bytes == null) {
             bytes = new LinkedBlockingQueue<>();
@@ -79,6 +85,13 @@ public class MainApplication extends Application {
 
     public static LinkedBlockingQueue getQueue(){
         return queue;
+    }
+
+    public static LinkedBlockingQueue<Integer> getSpoQueue() {
+        return spoQueue;
+    }
+    public static LinkedBlockingQueue<Integer> getEcgQueue() {
+        return ecgQueue;
     }
 
     public static LinkedBlockingQueue getBytes() {

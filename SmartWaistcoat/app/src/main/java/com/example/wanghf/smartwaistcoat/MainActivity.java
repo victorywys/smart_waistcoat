@@ -22,14 +22,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.androidplot.Plot;
-import com.androidplot.util.PlotStatistics;
-import com.androidplot.util.Redrawer;
-import com.androidplot.xy.BoundaryMode;
-import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.StepMode;
-import com.androidplot.xy.XYPlot;
 import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
 import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
@@ -118,12 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
         context = this;
 
-        mainController = new MainController(context, MainApplication.getQueue());
+        mainController = new MainController(context, MainApplication.getSpoQueue(), MainApplication.getEcgQueue());
 
         initPlots();
-
-//        loadDatas();
-//        simulator();
     }
 
     @Override
@@ -153,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String source = sharedPreferences.getString("data_source", "组合包1");
+        BroadcastUtil.stopData(context, sourceMap.get(source));
         LocalBroadcastManager.getInstance(context).unregisterReceiver(myReceiver);
     }
 
@@ -353,34 +345,46 @@ public class MainActivity extends AppCompatActivity {
             // 心电
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
-                if (currentECG < ECG_COUNT) {
-                    avgECG = (currentECG * avgECG + data) / (++currentECG);
-                    return;
-                }
-                else if (currentECG == ECG_COUNT) {
-                    ecgViewUp.setEcgMax(2 * avgECG);
-                    currentECG++;
-                }
-
+                int max = intent.getIntExtra("MAX", 0);
+//                if (currentECG < ECG_COUNT) {
+//                    avgECG = (currentECG * avgECG + data) / (++currentECG);
+//                    return;
+//                }
+//                else if (currentECG == ECG_COUNT) {
+//                    ecgViewUp.setEcgMax(2 * avgECG);
+//                    currentECG++;
+//                }
+//                ecgViewUp.setEcgMax(max);
                 ecgViewUp.addEcgData0(data);
 
+                Log.i(TAG, "MAX" + max);
                 Log.i(TAG, "ecg" + data);
             }
 
             // SPO2，阻抗，压力
             if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
                 int data = intent.getIntExtra("IMPEDANCE", 0);
-                if (currentImpedance < SPO_COUNT) {
-                    avgImpedance = (currentImpedance * avgImpedance + data) / (++currentImpedance);
-                    return;
+                int max = intent.getIntExtra("MAX", 0);
+                int min = intent.getIntExtra("MIN", 0);
+                if (data > max || data < min) {
+                    Log.i(TAG, "ddddddddddddddddddddddddddddddddddddddd");
                 }
-                else if (currentImpedance == SPO_COUNT) {
-                    ecgViewMid.setEcgMax(avgImpedance * 2);
-                    currentImpedance++;
-                }
+                ecgViewMid.setEcgMax(max);
+                ecgViewMid.setEcgMin(min);
+//                if (currentImpedance < SPO_COUNT) {
+//                    avgImpedance = (currentImpedance * avgImpedance + data) / (++currentImpedance);
+//                    return;
+//                }
+//                else if (currentImpedance == SPO_COUNT) {
+//                    ecgViewMid.setEcgMax(avgImpedance * 2);
+//                    currentImpedance++;
+//                }
                 ecgViewMid.addEcgData0(data);
+                ecgViewMid.startDrawWave();
 
+//                Log.i(TAG, "MAX" + max);
                 Log.i(TAG, "IMPEDANCE" + data);
+//                Log.i(TAG, "MIN" + min);
             }
 
             // Gsenso

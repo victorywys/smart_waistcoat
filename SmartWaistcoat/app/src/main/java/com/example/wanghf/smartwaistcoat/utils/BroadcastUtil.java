@@ -50,9 +50,11 @@ public abstract class BroadcastUtil {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    public static void updateImpedance(Context context, int value) {
+    public static void updateImpedance(Context context, int value, int max, int min) {
         Intent intent = new Intent(ACTION_IMPEDANCE_UPDATE);
         intent.putExtra("IMPEDANCE", value);
+        intent.putExtra("MAX", max);
+        intent.putExtra("MIN", min);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
@@ -68,9 +70,10 @@ public abstract class BroadcastUtil {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    public static void updateECG(Context context, int ecg) {
+    public static void updateECG(Context context, int ecg, int max) {
         Intent intent = new Intent(ACTION_ECG_UPDATE);
         intent.putExtra("ECG", ecg);
+        intent.putExtra("MAX", max);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
