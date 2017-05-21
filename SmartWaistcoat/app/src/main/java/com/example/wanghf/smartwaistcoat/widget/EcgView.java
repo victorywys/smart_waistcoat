@@ -36,9 +36,9 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private double ecgMin = 0;
     private String bgColor = "#000000";
     private int wave_speed = 25;//波速: 25mm/s
-    private int sleepTime = 8; //每次锁屏的时间间距，单位:ms
+    private int sleepTime = 4; //每次锁屏的时间间距，单位:ms
     private float lockWidth;//每次锁屏需要画的
-//    private int ecgPerCount = 4;//每次画心电数据的个数，心电每秒有250个数据包
+    private int ecgPerCount = 1;//每次画心电数据的个数，心电每秒有250个数据包
 
     private Queue<Integer> ecg0Datas = new LinkedList<Integer>();
 
@@ -53,10 +53,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private double ecgXOffset;//每次X坐标偏移的像素
     private int blankLineWidth = 6;//右侧空白点的宽度
 
-//    private static SoundPool soundPool;
-//    private static int soundId;//心跳提示音
-
-    public EcgView(Context context, AttributeSet attrs){
+    public EcgView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
         this.surfaceHolder = getHolder();
@@ -70,7 +67,6 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(6);
 
-//        ecgXOffset = lockWidth / ecgPerCount;
         ecgXOffset = lockWidth;
         startY0 = mHeight * (1 / 2);//波1初始Y坐标是控件高度的1/2
         ecgYRatio = mHeight / (ecgMax - ecgMin);
@@ -81,7 +77,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
      *
      * 计算出每次锁屏应该画的px值
      */
-    private void converXOffset(){
+    private void converXOffset() {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         int width = dm.widthPixels;
         int height = dm.heightPixels;
@@ -103,7 +99,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         Canvas canvas = holder.lockCanvas();
         canvas.drawColor(Color.parseColor(bgColor));
         holder.unlockCanvasAndPost(canvas);
-//        startThread();
+        startThread();
     }
 
     @Override
@@ -176,16 +172,16 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawWave0() {
         try {
             float mStartX = startX;
-//            if (ecg0Datas.size() > ecgPerCount) {
-//                for(int i=0;i<ecgPerCount;i++){
+            if (ecg0Datas.size() > ecgPerCount) {
+                for(int i=0;i<ecgPerCount;i++){
                     float newX = (float) (mStartX + ecgXOffset);
                     int newY = ecgConver(ecg0Datas.poll());
                     mCanvas.drawLine(mStartX, startY0, newX, newY, mPaint);
                     mStartX = newX;
                     startY0 = newY;
-//                }
-//            }
-        }catch (NoSuchElementException e){
+                }
+            }
+        } catch (NoSuchElementException e){
             e.printStackTrace();
         }
     }
@@ -196,26 +192,30 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
      * @return
      */
     private int ecgConver(int data) {
-        Log.i("EcgView", "" + data);
-        data = (int) (ecgMax - data);
-        data = (int) (data * ecgYRatio);
+//        Log.i("EcgView", "" + data);
+        int newData = (int) (ecgMax - data);
+        newData = (int) (newData * ecgYRatio);
         Log.i("EcgView", ecgMax + "");
-        Log.i("EcgView", ecgMin + "");
-        Log.i("EcgView", data + "");
-        return data;
+//        Log.i("EcgView", ecgMin + "");
+//        if (newData > 554 || newData < 0) {
+//            Log.i("EcgView", data + "");
+//            Log.i("EcgView", ecgMin + "," + ecgMax);
+//            Log.i("EcgView", "" + ecgYRatio);
+//        }
+
+        return newData;
     }
 
     public void addEcgData0(int data){
         ecg0Datas.add(data);
     }
 
-    public void setEcgMax(double max) {
+    synchronized public void setEcgMax(double max) {
         ecgMax = max;
     }
 
-    public void setEcgMin(double min) {
+    synchronized public void setEcgMin(double min) {
         ecgYRatio = mHeight / (ecgMax - ecgMin);
         ecgMin = min;
     }
-
 }

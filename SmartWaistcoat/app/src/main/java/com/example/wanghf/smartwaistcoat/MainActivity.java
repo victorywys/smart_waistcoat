@@ -113,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
         mainController = new MainController(context, MainApplication.getSpoQueue(), MainApplication.getEcgQueue());
 
         initPlots();
+
+//        loadDatas();
+//        simulator();
     }
 
     @Override
@@ -367,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                 int max = intent.getIntExtra("MAX", 0);
                 int min = intent.getIntExtra("MIN", 0);
                 if (data > max || data < min) {
-                    Log.i(TAG, "ddddddddddddddddddddddddddddddddddddddd");
+                    Log.i("EcgView", "ddddddddddddddddddddddddddddddddddddddd");
                 }
                 ecgViewMid.setEcgMax(max);
                 ecgViewMid.setEcgMin(min);
@@ -380,9 +383,9 @@ public class MainActivity extends AppCompatActivity {
 //                    currentImpedance++;
 //                }
                 ecgViewMid.addEcgData0(data);
-                ecgViewMid.startDrawWave();
+//                ecgViewMid.startDrawWave();
 
-//                Log.i(TAG, "MAX" + max);
+                Log.i("EcgView", "MAX" + max);
                 Log.i(TAG, "IMPEDANCE" + data);
 //                Log.i(TAG, "MIN" + min);
             }
@@ -437,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 模拟心电发送，心电数据是一秒500个包，所以
+     * 模拟心电发送，心电数据是一秒250个包，所以
      */
     private void simulator(){
         new Timer().schedule(new TimerTask() {

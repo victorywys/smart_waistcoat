@@ -76,7 +76,7 @@ public class MainController {
 
             while (ControllerThread.this.running) {
                 try {
-                    int spo = (int) spoQueue.poll();
+                    int spo = (int) spoQueue.take();
                     spoList.add(spo);
                     int size = spoList.size();
                     maxSpo = Integer.MIN_VALUE;
@@ -93,8 +93,9 @@ public class MainController {
 
                     if (spoList.size() >= 750) {
                         spoList.remove(0);
+                        BroadcastUtil.updateImpedance(context, spo, maxSpo, minSpo);
                     }
-                    BroadcastUtil.updateImpedance(context, spo, maxSpo, minSpo);
+
 //                    BroadcastUtil.updateECG(context, (int) ecgQueue.getFirst(), 0);
 
 //                    if (ecgQueue.size() >=  500) {

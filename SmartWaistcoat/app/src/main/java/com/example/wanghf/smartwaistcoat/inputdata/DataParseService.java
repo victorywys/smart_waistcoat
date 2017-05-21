@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.wanghf.smartwaistcoat.MainApplication;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 import com.example.wanghf.smartwaistcoat.utils.ByteUtil;
+import com.example.wanghf.smartwaistcoat.utils.FileUtil;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -28,6 +29,8 @@ public class DataParseService extends Service {
     private ByteFifo byteFifo = null;
     private TranslateThread translateThread = null;
     private ByteUtil byteUtil = new ByteUtil();
+
+    FileUtil fileUtil = new FileUtil();
 
     private LinkedBlockingQueue<WaistcoatData> queue;
     private LinkedBlockingQueue<Byte> bytesQueue;
@@ -298,8 +301,10 @@ public class DataParseService extends Service {
 
 //            try {
                 spoQueue.offer(data1);
+            fileUtil.write2SDFromInputString("AAA", "imp.txt", data1 + "\n");
 //                spoQueue.push(data2);
                 spoQueue.offer(data3);
+            fileUtil.write2SDFromInputString("AAA", "imp.txt", data3 + "\n");
 //                spoQueue.push(data4);
 
 

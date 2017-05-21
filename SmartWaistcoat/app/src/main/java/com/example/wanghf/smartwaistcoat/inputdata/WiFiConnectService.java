@@ -43,6 +43,7 @@ public class WiFiConnectService extends Service {
     private volatile ConnectedThread connectedThread;    // 通信
     private LinkedBlockingQueue<Byte> revBytes;
     private FileUtil fileUtil = new FileUtil();
+    private int currentId = 1;
 
     private HashMap<Integer, byte[]> sourceMap = new HashMap<Integer, byte[]>() {
         {
@@ -271,6 +272,7 @@ public class WiFiConnectService extends Service {
         }
 
         void cancel() {
+            stopData(currentId);
             connectThread.cancel();
             if (inputStream != null) {
                 try {
@@ -303,10 +305,12 @@ public class WiFiConnectService extends Service {
                 if (intent.getAction().equals(BroadcastUtil.ACTION_RECEIVE_DATA)) {
                     int id = intent.getIntExtra("ID", 7);
                     receiveData(id);
+                    currentId = id;
                 }
                 else if (intent.getAction().equals(BroadcastUtil.ACTION_STOP_DATA)) {
                     int id = intent.getIntExtra("ID", 7);
                     stopData(id);
+                    currentId = id;
                 }
             }
         };
