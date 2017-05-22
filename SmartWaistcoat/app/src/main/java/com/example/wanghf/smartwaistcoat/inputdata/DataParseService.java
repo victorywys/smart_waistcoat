@@ -51,6 +51,7 @@ public class DataParseService extends Service {
 
         spoQueue = MainApplication.getSpoQueue();
         ecgQueue = MainApplication.getEcgQueue();
+        gsenQueue = MainApplication.getGsenQueue();
         if (bytesQueue == null) {
             bytesQueue = MainApplication.getBytes();
         }
@@ -267,10 +268,6 @@ public class DataParseService extends Service {
             ecgQueue.offer(data3);
             ecgQueue.offer(data4);
 
-//            BroadcastUtil.updateECG(context, data1);
-//            BroadcastUtil.updateECG(context, data2);
-//            BroadcastUtil.updateECG(context, data3);
-//            BroadcastUtil.updateECG(context, data4);
         }
 
         /**
@@ -292,26 +289,18 @@ public class DataParseService extends Service {
 
             int data1 = ((buffer[2] & 0x7f) + head[0] * 128) * 256 * 256 +
                     ((buffer[3] & 0x7f) + 128 * head[1]) * 256 + (buffer[4] & 0x7f) + 128 * head[2];
-//            int data2 = ((buffer[5] & 0x7f) + head[3] * 128) * 256 * 256 +
-//                    ((buffer[6] & 0x7f) + 128 * head[4]) * 256 + (buffer[7] & 0x7f) + 128 * head[5];
+
             int data3 = ((buffer[8] & 0x7f) + head[6] * 128) * 256 * 256 +
                     ((buffer[9] & 0x7f) + 128 * head[7]) * 256 + (buffer[10] & 0x7f) + 128 * head[8];
-//            int data4 = ((buffer[11] & 0x7f) + head[9] * 128) * 256 * 256 +
-//                    ((buffer[12] & 0x7f) + 128 * head[10]) * 256 + (buffer[13] & 0x7f) + 128 * head[11];
 
 //            try {
                 spoQueue.offer(data1);
-            fileUtil.write2SDFromInputString("AAA", "imp.txt", data1 + "\n");
+//            fileUtil.write2SDFromInputString("AAA", "imp.txt", data1 + "\n");
 //                spoQueue.push(data2);
                 spoQueue.offer(data3);
-            fileUtil.write2SDFromInputString("AAA", "imp.txt", data3 + "\n");
+//            fileUtil.write2SDFromInputString("AAA", "imp.txt", data3 + "\n");
 //                spoQueue.push(data4);
 
-
-//            BroadcastUtil.updateImpedance(context, data1);
-//            BroadcastUtil.updateImpedance(context, data2);
-//            BroadcastUtil.updateImpedance(context, data3);
-//            BroadcastUtil.updateImpedance(context, data4);
         }
 
         /**
@@ -335,15 +324,15 @@ public class DataParseService extends Service {
                 for (int i = 0; i < 2; i++) {
                     int data1 = ((buffer[6 * i + 2] & 0x7f) + head[6 * i] * 128) * 256 +
                             (buffer[6 * i + 3] & 0x7f) + 128 * head[6 * i + 1];
-//                    BroadcastUtil.updateECG(context, data1);
+                    ecgQueue.offer(data1);
 
                     int data2 = ((buffer[6 * i + 4] & 0x7f) + head[6 * i + 2] * 128) * 256 +
                             (buffer[6 * i + 5] & 0x7f) + 128 * head[6 * i + 3];
-//                    BroadcastUtil.updateImpedance(context, data2);
+                    spoQueue.offer(data2);
 
                     int data3 = ((buffer[6 * i + 6] & 0x7f) + head[6 * i + 4] * 128) * 256 +
                             (buffer[6 * i + 7] & 0x7f) + 128 * head[6 * i + 5];
-                    BroadcastUtil.updateStrike(context, data3);
+                    gsenQueue.offer(data3);
                 }
             }
             else {
@@ -353,7 +342,7 @@ public class DataParseService extends Service {
                     if (data > 32768) {
                         data -= 65536;
                     }
-                    BroadcastUtil.updateStrike(context, data);
+                    gsenQueue.offer(data);
                 }
             }
 

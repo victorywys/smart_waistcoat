@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     private String msgNumber2 = "";
     private String msgNumber3 = "";
 
+    private int source_id = 7;
+
     private boolean showingCurve;
     private boolean curveActive = true;
     private boolean showingTable;
@@ -73,18 +75,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Integer> datas = new ArrayList<Integer>();
     private Queue<Integer> data0Q = new LinkedList<Integer>();
 
-    private final int ECG_COUNT = 250;
-    private final int SPO_COUNT = 250;
-    private final int GSEN_COUNT = 100;
-    private final int PRESS_COUNT = 10;
-    private final int ZUKANG_COUNT = 1;
-
-    private int currentECG;
-    private int currentImpedance;
-    private int currentStrike;
-    private double avgECG;
-    private double avgImpedance;
-    private double avgStrike;
+    private final int ECG_WIDTH = 1;
+    private final int SPO_WIDTH = 1;
+    private final int GSEN_WIDTH = 1;
+    private final int PRESS_WIDTH = 50;
+    private final int ZUKANG_WIDTH = 50;
 
     private HashMap<String, Integer> sourceMap = new HashMap<String, Integer>(){
         {
@@ -110,10 +105,13 @@ public class MainActivity extends AppCompatActivity {
 
         context = this;
 
-        mainController = new MainController(context, MainApplication.getSpoQueue(), MainApplication.getEcgQueue());
+        mainController = new MainController(context, MainApplication.getSpoQueue(),
+                MainApplication.getEcgQueue(), MainApplication.getGsenQueue());
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
 
         initPlots();
-
 //        loadDatas();
 //        simulator();
     }
@@ -122,14 +120,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mainController.onResume();
-
-        currentECG = 0;
-        currentImpedance = 0;
-        currentStrike = 0;
-
-        avgECG = 0;
-        avgImpedance = 0;
-        avgStrike = 0;
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
@@ -145,14 +135,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String source = sharedPreferences.getString("data_source", "组合包1");
-        BroadcastUtil.stopData(context, sourceMap.get(source));
+        BroadcastUtil.stopData(context, source_id);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(myReceiver);
     }
 
     @Override
     protected void onDestroy() {
+        BroadcastUtil.stopData(context, source_id);
         super.onDestroy();
     }
 
@@ -163,8 +152,11 @@ public class MainActivity extends AppCompatActivity {
         ecgViewDown = (EcgView) findViewById(R.id.ecg_view_down);
 
         textViewPlotUp = (TextView) findViewById(R.id.text_plot_up);
+        ecgViewUp.setLockWidth(ECG_WIDTH);
         textViewPlotMid = (TextView) findViewById(R.id.text_plot_mid);
+        ecgViewMid.setLockWidth(SPO_WIDTH);
         textViewPlotDown = (TextView) findViewById(R.id.text_plot_down);
+        ecgViewDown.setLockWidth(GSEN_WIDTH);
 
         // 按钮
         buttonDisplayCurve = (ImageButton) findViewById(R.id.button_switch_display);
@@ -175,70 +167,78 @@ public class MainActivity extends AppCompatActivity {
         textViewXinlv = (TextView) findViewById(R.id.text_num_xinlv);
         textViewxueyang = (TextView) findViewById(R.id.text_num_xueyangzhi);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        switch (sharedPreferences.getString("data_source", "组合包1")) {
-            case "心电测量":
+        switch (source_id) {
+            case 1:
                 textViewPlotUp.setText("ECG");
+                ecgViewUp.setLockWidth(ECG_WIDTH);
                 textViewPlotMid.setText("");
                 textViewPlotDown.setText("");
                 break;
-            case "血氧测量":
+            case 2:
                 textViewPlotUp.setText("");
                 textViewPlotMid.setText("SPO2");
+                ecgViewMid.setLockWidth(SPO_WIDTH);
                 textViewPlotDown.setText("");
                 break;
-            case "G-senso测量":
+            case 3:
                 textViewPlotUp.setText("GST-X");
+                ecgViewUp.setLockWidth(GSEN_WIDTH);
                 textViewPlotMid.setText("GST-Y");
+                ecgViewMid.setLockWidth(GSEN_WIDTH);
                 textViewPlotDown.setText("GST-Z");
+                ecgViewDown.setLockWidth(GSEN_WIDTH);
                 break;
-            case "压力测量":
+            case 4:
                 textViewPlotUp.setText("");
                 textViewPlotMid.setText("压力");
+                ecgViewMid.setLockWidth(PRESS_WIDTH);
                 textViewPlotDown.setText("");
                 break;
-            case "阻抗测量":
+            case 5:
                 textViewPlotUp.setText("");
                 textViewPlotMid.setText("阻抗");
+                ecgViewMid.setLockWidth(ZUKANG_WIDTH);
                 textViewPlotDown.setText("");
                 break;
-            case "01包":
+            case 6:
                 textViewPlotUp.setText("");
                 textViewPlotMid.setText("");
                 textViewPlotDown.setText("");
                 break;
-            case "组合包1":
+            case 7:
                 textViewPlotUp.setText("ECG");
                 textViewPlotMid.setText("SPO2");
                 textViewPlotDown.setText("GST-X");
                 break;
-            case "组合包2":
+            case 8:
                 textViewPlotUp.setText("ECG");
                 textViewPlotMid.setText("SPO2");
                 textViewPlotDown.setText("GST-Y");
                 break;
-            case "组合包3":
+            case 9:
                 textViewPlotUp.setText("ECG");
                 textViewPlotMid.setText("SPO2");
                 textViewPlotDown.setText("GST-Z");
                 break;
-            case "组合包4":
+            case 10:
                 textViewPlotUp.setText("ECG");
                 textViewPlotMid.setText("阻抗");
                 textViewPlotDown.setText("GST-X");
                 break;
-            case "组合包5":
+            case 11:
                 textViewPlotUp.setText("ECG");
                 textViewPlotMid.setText("阻抗");
                 textViewPlotDown.setText("GST-Y");
                 break;
-            case "组合包6":
+            case 12:
                 textViewPlotUp.setText("ECG");
                 textViewPlotMid.setText("阻抗");
                 textViewPlotDown.setText("GST-Z");
                 break;
             default:
-
+                textViewPlotUp.setText("ECG");
+                textViewPlotMid.setText("SPO2");
+                textViewPlotDown.setText("GST-X");
                 break;
         }
     }
@@ -258,11 +258,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
         // 停止数据
         if (showingTable) {
-            BroadcastUtil.stopData(context, id);
+            BroadcastUtil.stopData(context, source_id);
             showingTable = false;
         }
 
@@ -270,11 +268,11 @@ public class MainActivity extends AppCompatActivity {
         if (showingCurve) {
             buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             showingCurve = false;
-            BroadcastUtil.stopData(context, id);
+            BroadcastUtil.stopData(context, source_id);
         } else {
             buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.stop));
             showingCurve = true;
-            BroadcastUtil.receiveData(context, id);
+            BroadcastUtil.receiveData(context, source_id);
         }
     }
 
@@ -290,23 +288,20 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
-
         // 停止
         if (showingCurve) {
-            BroadcastUtil.stopData(context, id);
+            BroadcastUtil.stopData(context, source_id);
             showingCurve = false;
         }
 
         if (showingTable) {
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             showingTable = false;
-            BroadcastUtil.stopData(context, id);
+            BroadcastUtil.stopData(context, source_id);
         } else {
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.stop));
             showingTable = true;
-            BroadcastUtil.receiveData(context, id);
+            BroadcastUtil.receiveData(context, source_id);
         }
     }
 
@@ -349,19 +344,12 @@ public class MainActivity extends AppCompatActivity {
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
                 int max = intent.getIntExtra("MAX", 0);
-//                if (currentECG < ECG_COUNT) {
-//                    avgECG = (currentECG * avgECG + data) / (++currentECG);
-//                    return;
-//                }
-//                else if (currentECG == ECG_COUNT) {
-//                    ecgViewUp.setEcgMax(2 * avgECG);
-//                    currentECG++;
-//                }
+                int min = intent.getIntExtra("MIN", 0);
+
 //                ecgViewUp.setEcgMax(max);
+//                ecgViewUp.setEcgMin(min);
                 ecgViewUp.addEcgData0(data);
 
-                Log.i(TAG, "MAX" + max);
-                Log.i(TAG, "ecg" + data);
             }
 
             // SPO2，阻抗，压力
@@ -369,41 +357,23 @@ public class MainActivity extends AppCompatActivity {
                 int data = intent.getIntExtra("IMPEDANCE", 0);
                 int max = intent.getIntExtra("MAX", 0);
                 int min = intent.getIntExtra("MIN", 0);
-                if (data > max || data < min) {
-                    Log.i("EcgView", "ddddddddddddddddddddddddddddddddddddddd");
-                }
-                ecgViewMid.setEcgMax(max);
-                ecgViewMid.setEcgMin(min);
-//                if (currentImpedance < SPO_COUNT) {
-//                    avgImpedance = (currentImpedance * avgImpedance + data) / (++currentImpedance);
-//                    return;
-//                }
-//                else if (currentImpedance == SPO_COUNT) {
-//                    ecgViewMid.setEcgMax(avgImpedance * 2);
-//                    currentImpedance++;
-//                }
+//
+//                ecgViewMid.setEcgMax(max);
+//                ecgViewMid.setEcgMin(min);
                 ecgViewMid.addEcgData0(data);
-//                ecgViewMid.startDrawWave();
 
-                Log.i("EcgView", "MAX" + max);
-                Log.i(TAG, "IMPEDANCE" + data);
-//                Log.i(TAG, "MIN" + min);
             }
 
             // Gsenso
             if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
                 int data = intent.getIntExtra("STRIKE", 0);
-                if (currentStrike < GSEN_COUNT) {
-                    avgStrike = (currentStrike * avgStrike + data) / (++currentStrike);
-                    return;
-                }
-                else if (currentStrike == SPO_COUNT) {
-                    ecgViewDown.setEcgMax(avgStrike * 2);
-                    currentStrike++;
-                }
+                int max = intent.getIntExtra("MAX", 0);
+                int min = intent.getIntExtra("MIN", 0);
+//
+//                ecgViewDown.setEcgMin(min);
+//                ecgViewDown.setEcgMax(max);
                 ecgViewDown.addEcgData0(data);
 
-                Log.i(TAG, "STRIKE" + data);
             }
         }
     };
@@ -471,12 +441,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             int curAvg = 0;
-            for (int i = 0; i < ECG_COUNT; i++) {
-                curAvg = (curAvg * i + datas.get(i)) / (i + 1);
-            }
-            ecgViewUp.setEcgMax(curAvg * 2);
-            ecgViewMid.setEcgMax(curAvg * 2);
-            ecgViewDown.setEcgMax(curAvg * 2);
+//            for (int i = 0; i < ECG_COUNT; i++) {
+//                curAvg = (curAvg * i + datas.get(i)) / (i + 1);
+//            }
+//            ecgViewUp.setEcgMax(curAvg * 2);
+//            ecgViewMid.setEcgMax(curAvg * 2);
+//            ecgViewDown.setEcgMax(curAvg * 2);
 
             data0Q.addAll(datas);
 

@@ -80,6 +80,10 @@
             android:screenOrientation="portrait">
 
         </activity>
+        <activity android:name="com.example.wanghf.smartwaistcoat.FilterActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
 
         <service
             android:name="com.example.wanghf.smartwaistcoat.inputdata.WiFiConnectService"

@@ -16,9 +16,12 @@ import android.view.SurfaceView;
 import com.example.wanghf.myapplication.R;
 
 import java.net.PortUnreachableException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 //import dev.frankie.ecgwave.R;
 
@@ -32,15 +35,22 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     public  boolean isRunning;
     private Canvas mCanvas;
 
-    private double ecgMax = 2200000;//心电的最大值
+    private double ecgMax = 32000000;//心电的最大值
     private double ecgMin = 0;
+    private double ecgMaxNew = Integer.MIN_VALUE;
+    private double ecgMinNew = Integer.MAX_VALUE;
     private String bgColor = "#000000";
     private int wave_speed = 25;//波速: 25mm/s
     private int sleepTime = 4; //每次锁屏的时间间距，单位:ms
     private float lockWidth;//每次锁屏需要画的
-    private int ecgPerCount = 1;//每次画心电数据的个数，心电每秒有250个数据包
+    private int ecgPerCount = 6;//每次画心电数据的个数，心电每秒有250个数据包
 
-    private Queue<Integer> ecg0Datas = new LinkedList<Integer>();
+    private List<Integer> maxList = new LinkedList<>();
+    private List<Integer> minList = new LinkedList<>();
+    private int totalCount = 0;
+    private int currentCount = 0;
+
+    private LinkedBlockingQueue<Integer> ecg0Datas = new LinkedBlockingQueue<>();
 
     private Paint mPaint;//画波形图的画笔
     private int mWidth;//控件宽度
@@ -134,18 +144,9 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         @Override
         public void run() {
             while(isRunning){
-                long startTime = System.currentTimeMillis();
 
                 startDrawWave();
 
-                long endTime = System.currentTimeMillis();
-                if(endTime - startTime < sleepTime){
-                    try {
-                        Thread.sleep(sleepTime - (endTime - startTime));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
     };
@@ -160,8 +161,8 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
 
         surfaceHolder.unlockCanvasAndPost(mCanvas);
 
-        startX = (int) (startX + lockWidth);
-        if(startX > mWidth){
+        if(startX > mWidth) {
+//            Log.i("EcgView", totalCount + "");
             startX = 0;
         }
     }
@@ -172,13 +173,24 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawWave0() {
         try {
             float mStartX = startX;
-            if (ecg0Datas.size() > ecgPerCount) {
-                for(int i=0;i<ecgPerCount;i++){
+            if (ecg0Datas.size() > 500) {
+                Log.i("EcgView", "" + ecg0Datas.size());
+                if (startX == 0) {
+                    ecgMax = ecgMaxNew;
+                    ecgMin = ecgMinNew;
+                    ecgYRatio = mHeight / (ecgMax - ecgMin);
+                    ecgMinNew = Integer.MAX_VALUE;
+                    ecgMaxNew = Integer.MIN_VALUE;
+                }
+                for( int i=0; i<ecgPerCount; i++){
+                    Log.i("lllll", "" + startX);
                     float newX = (float) (mStartX + ecgXOffset);
                     int newY = ecgConver(ecg0Datas.poll());
+                    totalCount++;
                     mCanvas.drawLine(mStartX, startY0, newX, newY, mPaint);
                     mStartX = newX;
                     startY0 = newY;
+                    startX += (int) lockWidth;
                 }
             }
         } catch (NoSuchElementException e){
@@ -192,30 +204,24 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
      * @return
      */
     private int ecgConver(int data) {
-//        Log.i("EcgView", "" + data);
+
         int newData = (int) (ecgMax - data);
         newData = (int) (newData * ecgYRatio);
-        Log.i("EcgView", ecgMax + "");
-//        Log.i("EcgView", ecgMin + "");
-//        if (newData > 554 || newData < 0) {
-//            Log.i("EcgView", data + "");
-//            Log.i("EcgView", ecgMin + "," + ecgMax);
-//            Log.i("EcgView", "" + ecgYRatio);
-//        }
 
         return newData;
     }
 
     public void addEcgData0(int data){
-        ecg0Datas.add(data);
+        if (data > ecgMaxNew) {
+            ecgMaxNew = data;
+        }
+        else if (data < ecgMinNew) {
+            ecgMinNew = data;
+        }
+        ecg0Datas.offer(data);
     }
 
-    synchronized public void setEcgMax(double max) {
-        ecgMax = max;
-    }
-
-    synchronized public void setEcgMin(double min) {
-        ecgYRatio = mHeight / (ecgMax - ecgMin);
-        ecgMin = min;
+    public void setLockWidth(float width) {
+        lockWidth = width;
     }
 }

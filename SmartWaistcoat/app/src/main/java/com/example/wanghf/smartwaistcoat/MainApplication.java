@@ -27,6 +27,7 @@ public class MainApplication extends Application {
     private static LinkedBlockingQueue<WaistcoatData> queue = null;
     private static LinkedBlockingQueue<Integer> spoQueue = null;
     private static LinkedBlockingQueue<Integer> ecgQueue = null;
+    private static LinkedBlockingQueue<Integer> gsenQueue = null;
     private WiFiConnectService wiFiConnectService;
     private DataParseService dataParseService;
 
@@ -42,6 +43,7 @@ public class MainApplication extends Application {
 
         spoQueue = new LinkedBlockingQueue<>();
         ecgQueue = new LinkedBlockingQueue<>();
+        gsenQueue = new LinkedBlockingQueue<>();
 
         if (bytes == null) {
             bytes = new LinkedBlockingQueue<>();
@@ -92,6 +94,9 @@ public class MainApplication extends Application {
     }
     public static LinkedBlockingQueue<Integer> getEcgQueue() {
         return ecgQueue;
+    }
+    public static LinkedBlockingQueue<Integer> getGsenQueue() {
+        return gsenQueue;
     }
 
     public static LinkedBlockingQueue getBytes() {

@@ -193,12 +193,6 @@ public class WiFiConnectService extends Service {
                     break;
                 }
                 if (bufferLength > 0) {
-//                    byte[] save = new byte[bufferLength];
-//                    for (int i = 0; i<bufferLength; i++) {
-//                        save[i] = buffer[i];
-//                    }
-//                    Log.i(TAG, new String(buffer, 0, bufferLength));
-//                    fileUtil.write2SDFromInputByte("AAB", "ll.txt", save.clone());
                     for (int i = 0; i < bufferLength; i++) {
                             try {
                                 revBytes.put(buffer[i]);
@@ -213,43 +207,6 @@ public class WiFiConnectService extends Service {
             editor.putBoolean("connect_state", false);
             editor.apply();
             cancel();
-        }
-
-        /**
-         * 发送心跳 ， 30s
-         */
-        void startHBeatThread() {
-            // stop old
-            stopHeartBeatThread();
-            // start new
-            heartBeatThread = new Thread() {
-                public void run() {
-                    while(!Thread.currentThread().isInterrupted()) {
-                        try {
-                            Log.i(TAG, "heartBeat sent!");
-                            Thread.sleep(30000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        } catch (Exception ignore) {
-                            ignore.printStackTrace();
-                        }
-                    }
-                }
-            };
-            heartBeatThread.start();
-        }
-
-        private boolean isHeartBeatAlive() {
-            return heartBeatThread.isAlive();
-        }
-
-        void stopHeartBeatThread() {
-            if (heartBeatThread != null && heartBeatThread.isAlive()) {
-                try {
-                    heartBeatThread.interrupt();
-                } catch (Exception ignore) { }
-            }
         }
 
         /**

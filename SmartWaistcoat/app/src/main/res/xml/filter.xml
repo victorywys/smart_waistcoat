@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="滤波器设置">
+        <SwitchPreference
+            android:key="filter"
+            android:title="滤波器开关"
+            android:summary="关"
+            android:defaultValue="false">
+
+        </SwitchPreference>
+
+    </PreferenceCategory>
+</PreferenceScreen>

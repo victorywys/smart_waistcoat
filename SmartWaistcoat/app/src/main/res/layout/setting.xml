@@ -66,15 +66,25 @@
         android:background="#9e9e9e"
         android:textColor="@color/ap_white"
         android:onClick="onClickDataSource"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_setting7"
+        android:layout_below="@id/text_setting6"
+        android:text="滤波"
+        android:textSize="24sp"
+        android:background="#ffffff"
+        android:textColor="@color/ap_black"
+        android:onClick="onClickFilter"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/text_connect_state"
         android:text="连接状态：未连接"
-        android:background="#ffffff"
-        android:layout_below="@id/text_setting6"
+        android:background="#9e9e9e"
+        android:layout_below="@id/text_setting7"
         android:textSize="24sp"
-        android:textColor="@color/ap_black"
+        android:textColor="@color/ap_white"
         android:gravity="center"/>
 
 </RelativeLayout>

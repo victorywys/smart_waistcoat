@@ -70,4 +70,8 @@ public class SettingActivity extends Activity {
     public void onClickDataSource(View view) {
         startActivity(new Intent(SettingActivity.this, SourceActivity.class));
     }
+
+    public void onClickFilter(View view) {
+        startActivity(new Intent(SettingActivity.this, FilterActivity.class));
+    }
 }
