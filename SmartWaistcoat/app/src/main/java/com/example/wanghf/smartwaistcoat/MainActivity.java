@@ -255,6 +255,9 @@ public class MainActivity extends AppCompatActivity {
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.table));
             tableActive = false;
             curveActive = true;
+            ecgViewUp.startThread();
+            ecgViewMid.startThread();
+            ecgViewDown.startThread();
             return;
         }
 
@@ -285,6 +288,9 @@ public class MainActivity extends AppCompatActivity {
             tableActive = true;
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.curve));
+            ecgViewUp.stopThread();
+            ecgViewMid.stopThread();
+            ecgViewDown.stopThread();
             return;
         }
 
@@ -334,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
             if (action.equals(BroadcastUtil.ACTION_TABLES_UPDATE)) {
                 WaistcoatData waistcoatData = (WaistcoatData) intent.getSerializableExtra("TABLES");
                 textViewWendu.setText(waistcoatData.getWendu() + "");
-                textViewxueyang.setText(waistcoatData.getXueyang() + "");
+                textViewxueyang.setText(waistcoatData.getXueyang() + "%");
                 textViewDianliang.setText(waistcoatData.getDianliang() + "");
                 textViewXinlv.setText(waistcoatData.getXinlv() + "");
                 Log.i(TAG, "tables");

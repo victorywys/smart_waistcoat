@@ -131,12 +131,12 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         stopThread();
     }
 
-    private void startThread() {
+    public void startThread() {
         isRunning = true;
         new Thread(drawRunnable).start();
     }
 
-    private void stopThread(){
+    public void stopThread(){
         isRunning = false;
     }
 
