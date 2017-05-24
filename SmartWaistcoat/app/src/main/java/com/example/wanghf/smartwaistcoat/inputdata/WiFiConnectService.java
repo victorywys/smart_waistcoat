@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.sql.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -196,6 +198,7 @@ public class WiFiConnectService extends Service {
                     for (int i = 0; i < bufferLength; i++) {
                             try {
                                 revBytes.put(buffer[i]);
+                                Log.i(TAG, "BUFER");
                             } catch (Exception e) {
                             Log.i(TAG, "InterruptedException");
                         }
@@ -214,6 +217,7 @@ public class WiFiConnectService extends Service {
          */
         private synchronized void outWrite(byte[] bytes) {
             try {
+                Log.i(TAG, Arrays.toString(bytes));
                 outputStream.write(bytes);
             } catch (Exception e) {
                 Log.i(TAG,"heartBeat outWrite Exception");

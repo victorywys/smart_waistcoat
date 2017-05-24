@@ -73,9 +73,9 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void init() {
-        mPaint = new Paint();
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.WHITE);
-        mPaint.setStrokeWidth(6);
+        mPaint.setStrokeWidth(5);
 
         ecgXOffset = lockWidth;
         startY0 = mHeight * (1 / 2);//波1初始Y坐标是控件高度的1/2
@@ -131,12 +131,12 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         stopThread();
     }
 
-    public void startThread() {
+    private void startThread() {
         isRunning = true;
         new Thread(drawRunnable).start();
     }
 
-    public void stopThread(){
+    private void stopThread(){
         isRunning = false;
     }
 
@@ -173,7 +173,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private void drawWave0() {
         try {
             float mStartX = startX;
-            if (ecg0Datas.size() > 500) {
+            if (ecg0Datas.size() > 500 / lockWidth) {
                 Log.i("EcgView", "" + ecg0Datas.size());
                 if (startX == 0) {
                     ecgMax = ecgMaxNew;
@@ -183,7 +183,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
                     ecgMaxNew = Integer.MIN_VALUE;
                 }
                 for( int i=0; i<ecgPerCount; i++){
-                    Log.i("lllll", "" + startX);
+//                    Log.i("lllll", "" + startX);
                     float newX = (float) (mStartX + ecgXOffset);
                     int newY = ecgConver(ecg0Datas.poll());
                     totalCount++;

@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -77,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final int ECG_WIDTH = 1;
     private final int SPO_WIDTH = 1;
-    private final int GSEN_WIDTH = 1;
+    private final int GSEN_WIDTH = 2;
     private final int PRESS_WIDTH = 50;
-    private final int ZUKANG_WIDTH = 50;
+    private final int ZUKANG_WIDTH = 100;
 
     private HashMap<String, Integer> sourceMap = new HashMap<String, Integer>(){
         {
@@ -108,10 +109,11 @@ public class MainActivity extends AppCompatActivity {
         mainController = new MainController(context, MainApplication.getSpoQueue(),
                 MainApplication.getEcgQueue(), MainApplication.getGsenQueue());
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
 
-        initPlots();
+//        initPlots();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        loadDatas();
 //        simulator();
     }
@@ -120,6 +122,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mainController.onResume();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
+
+        initPlots();
+//
+//        ecgViewMid.startThread();
+//        ecgViewUp.startThread();
+//        ecgViewDown.startThread();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
@@ -255,9 +266,9 @@ public class MainActivity extends AppCompatActivity {
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.table));
             tableActive = false;
             curveActive = true;
-            ecgViewUp.startThread();
-            ecgViewMid.startThread();
-            ecgViewDown.startThread();
+//            ecgViewUp.startThread();
+//            ecgViewMid.startThread();
+//            ecgViewDown.startThread();
             return;
         }
 
@@ -288,9 +299,9 @@ public class MainActivity extends AppCompatActivity {
             tableActive = true;
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             buttonDisplayCurve.setImageDrawable(getResources().getDrawable(R.drawable.curve));
-            ecgViewUp.stopThread();
-            ecgViewMid.stopThread();
-            ecgViewDown.stopThread();
+//            ecgViewUp.stopThread();
+//            ecgViewMid.stopThread();
+//            ecgViewDown.stopThread();
             return;
         }
 

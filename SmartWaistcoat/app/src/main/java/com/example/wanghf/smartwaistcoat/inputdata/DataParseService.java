@@ -196,6 +196,7 @@ public class DataParseService extends Service {
                         }
                         break;
                     default:
+//                        Log.i(TAG, "state=" + state);
                         break;
                 }
             }
@@ -365,11 +366,11 @@ public class DataParseService extends Service {
                 head[i] = (buffer[1] >> (i - 6)) & 0x1;
             }
 
-            int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 + (buffer[3] & 0x7f) + 128 * head[4];
-            int data2 = ((buffer[8] & 0x7f) + head[11] * 128) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
-
-//            BroadcastUtil.updateImpedance(context, data1);
-//            BroadcastUtil.updateImpedance(context, data2);
+            for (int i =0 ; i < 6; i++) {
+                int data = ((buffer[2 * i + 2] & 0x7f) + head[0 + 2 * i] * 128) * 256 +
+                        (buffer[2 * i + 3] & 0x7f) + 128 * head[1 + 2 * i];
+                spoQueue.offer(data);
+            }
         }
 
         /**
@@ -389,15 +390,19 @@ public class DataParseService extends Service {
                 head[i] = (buffer[1] >> (i - 6)) & 0x1;
             }
 
-            int data1 = ((buffer[2] & 0x7f) + head[5] * 128) * 256 * 256 * 256 +
-                    ((buffer[3] & 0x7f) + 128 * head[4]) * 256 * 256 +
-                    ((buffer[4] & 0x7f) + 128 * head[3]) * 256 + (buffer[5] & 127) + 128 * head[2];
-            int data2 = ((buffer[6] & 0x7f) + head[1] * 128) * 256 * 256 * 256 +
-                    ((buffer[7] & 0x7f) + 128 * head[0]) * 256 * 256 +
-                    ((buffer[8] & 0x7f) + 128 * head[11]) * 256 + (buffer[9] & 0x7f) + 128 * head[10];
-            int data3 = ((buffer[10] & 0x7f) + head[9] * 128) * 256 * 256 * 256 +
-                    ((buffer[11] & 0x7f) + 128 * head[8]) * 256 * 256 +
-                    ((buffer[12] & 0x7f) + 128 * head[7]) * 256 + (buffer[13] & 0x7f) + 128 * head[6];
+            int data1 = ((buffer[2] & 0x7f) + head[0] * 128) * 256 * 256 * 256 +
+                    ((buffer[3] & 0x7f) + 128 * head[1]) * 256 * 256 +
+                    ((buffer[4] & 0x7f) + 128 * head[2]) * 256 + (buffer[5] & 127) + 128 * head[3];
+            int data2 = ((buffer[6] & 0x7f) + head[4] * 128) * 256 * 256 * 256 +
+                    ((buffer[7] & 0x7f) + 128 * head[5]) * 256 * 256 +
+                    ((buffer[8] & 0x7f) + 128 * head[6]) * 256 + (buffer[9] & 0x7f) + 128 * head[7];
+            int data3 = ((buffer[10] & 0x7f) + head[8] * 128) * 256 * 256 * 256 +
+                    ((buffer[11] & 0x7f) + 128 * head[9]) * 256 * 256 +
+                    ((buffer[12] & 0x7f) + 128 * head[10]) * 256 + (buffer[13] & 0x7f) + 128 * head[11];
+
+            spoQueue.offer(data1);
+            spoQueue.offer(data2);
+            spoQueue.offer(data3);
 
 //            BroadcastUtil.updateImpedance(context, data1);
 //            BroadcastUtil.updateImpedance(context, data2);
