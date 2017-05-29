@@ -45,11 +45,6 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     private float lockWidth;//每次锁屏需要画的
     private int ecgPerCount = 6;//每次画心电数据的个数，心电每秒有250个数据包
 
-    private List<Integer> maxList = new LinkedList<>();
-    private List<Integer> minList = new LinkedList<>();
-    private int totalCount = 0;
-    private int currentCount = 0;
-
     private LinkedBlockingQueue<Integer> ecg0Datas = new LinkedBlockingQueue<>();
 
     private Paint mPaint;//画波形图的画笔
@@ -186,7 +181,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
 //                    Log.i("lllll", "" + startX);
                     float newX = (float) (mStartX + ecgXOffset);
                     int newY = ecgConver(ecg0Datas.poll());
-                    totalCount++;
+//                    totalCount++;
                     mCanvas.drawLine(mStartX, startY0, newX, newY, mPaint);
                     mStartX = newX;
                     startY0 = newY;

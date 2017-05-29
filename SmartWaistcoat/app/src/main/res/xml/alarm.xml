@@ -3,27 +3,27 @@
     <PreferenceCategory android:title="报警条件">
         <SwitchPreference
             android:key="xinlv"
-            android:summary="范围未知"
+            android:summary="未知"
             android:title="心率正常范围"/>
         <SwitchPreference
             android:key="wendu"
-            android:summary="范围未知"
+            android:summary="未知"
             android:title="温度正常范围"
             android:defaultValue="false"/>
         <SwitchPreference
             android:key="xueyang"
-            android:summary="范围未知"
+            android:summary="未知"
             android:title="血氧正常范围"
             android:defaultValue="false"/>
         <SwitchPreference
             android:key="yali"
-            android:summary="压力范围"
+            android:summary="未知"
             android:title="压力正常范围"
             android:dialogTitle="设置压力范围"/>
         <SwitchPreference
             android:key="zukang"
             android:title="阻抗正常范围"
-            android:summary="阻抗正常范围"
+            android:summary="未知"
             android:dialogTitle="设置阻抗正常范围"/>
         <SwitchPreference
             android:key="zhenling"

@@ -32,7 +32,6 @@ public class DataParseService extends Service {
 
     FileUtil fileUtil = new FileUtil();
 
-    private LinkedBlockingQueue<WaistcoatData> queue;
     private LinkedBlockingQueue<Byte> bytesQueue;
     private LinkedBlockingQueue<Integer> ecgQueue;
     private LinkedBlockingQueue<Integer> spoQueue;
@@ -44,9 +43,6 @@ public class DataParseService extends Service {
         context = this;
         if (byteFifo == null) {
             byteFifo = ByteFifo.getInstance();
-        }
-        if (queue == null) {
-            queue = MainApplication.getQueue();
         }
 
         spoQueue = MainApplication.getSpoQueue();
@@ -196,7 +192,6 @@ public class DataParseService extends Service {
                         }
                         break;
                     default:
-//                        Log.i(TAG, "state=" + state);
                         break;
                 }
             }
@@ -224,11 +219,7 @@ public class DataParseService extends Service {
             waistcoatData.setWendu(((buffer[6] & 127) + 320) / 10);
 
             //更新数据表
-            try {
-                queue.put(waistcoatData.clone());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             BroadcastUtil.updateDataTable(context, waistcoatData.clone());
         }
 
@@ -294,14 +285,8 @@ public class DataParseService extends Service {
             int data3 = ((buffer[8] & 0x7f) + head[6] * 128) * 256 * 256 +
                     ((buffer[9] & 0x7f) + 128 * head[7]) * 256 + (buffer[10] & 0x7f) + 128 * head[8];
 
-//            try {
-                spoQueue.offer(data1);
-//            fileUtil.write2SDFromInputString("AAA", "imp.txt", data1 + "\n");
-//                spoQueue.push(data2);
-                spoQueue.offer(data3);
-//            fileUtil.write2SDFromInputString("AAA", "imp.txt", data3 + "\n");
-//                spoQueue.push(data4);
-
+            spoQueue.offer(data1);
+            spoQueue.offer(data3);
         }
 
         /**
@@ -403,10 +388,6 @@ public class DataParseService extends Service {
             spoQueue.offer(data1);
             spoQueue.offer(data2);
             spoQueue.offer(data3);
-
-//            BroadcastUtil.updateImpedance(context, data1);
-//            BroadcastUtil.updateImpedance(context, data2);
-//            BroadcastUtil.updateImpedance(context, data3);
         }
 
     }
@@ -427,7 +408,5 @@ public class DataParseService extends Service {
         if (!bytesQueue.isEmpty()) {
             bytesQueue.clear();
         }
-        if (!queue.isEmpty())
-            queue.clear();
     }
 }

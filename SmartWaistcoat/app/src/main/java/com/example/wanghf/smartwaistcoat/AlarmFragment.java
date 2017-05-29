@@ -79,7 +79,7 @@ public class AlarmFragment extends PreferenceFragment {
             boolean res = (boolean) newValue;
             if (res) {
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("请输入正常心率范围")
+                        .setTitle("请输入正常心率范围(下限,上限)")
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(editText)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -129,7 +129,7 @@ public class AlarmFragment extends PreferenceFragment {
             boolean res = (boolean) newValue;
             if (res) {
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("请输入正常温度范围")
+                        .setTitle("请输入正常温度范围(下限,上限)")
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(editText)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {

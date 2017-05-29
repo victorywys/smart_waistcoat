@@ -7,9 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Environment;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,7 +18,6 @@ import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -36,8 +34,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -76,9 +72,28 @@ public class MainActivity extends AppCompatActivity {
     private List<Integer> datas = new ArrayList<Integer>();
     private Queue<Integer> data0Q = new LinkedList<Integer>();
 
+    private boolean alarmXinlv;
+    private boolean alarmWendu;
+    private boolean alarmXueyang;
+    private boolean alarmYali;
+    private boolean alarmZukang;
+    private boolean alarmZhenling;
+    private boolean alarmDuanxin;
+    private boolean alarmDianhua;
+
+    private int xinlvLow;
+    private int xinlvHigh;
+    private int wenduLow;
+    private int wenduHigh;
+    private int xueyang;
+    private int yali;
+    private int zukang;
+
+    private Preference preferenceXinlv;
+
     private final int ECG_WIDTH = 1;
     private final int SPO_WIDTH = 1;
-    private final int GSEN_WIDTH = 2;
+    private final int GSEN_WIDTH = 1;
     private final int PRESS_WIDTH = 50;
     private final int ZUKANG_WIDTH = 100;
 
@@ -109,10 +124,6 @@ public class MainActivity extends AppCompatActivity {
         mainController = new MainController(context, MainApplication.getSpoQueue(),
                 MainApplication.getEcgQueue(), MainApplication.getGsenQueue());
 
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
-
-//        initPlots();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        loadDatas();
 //        simulator();
@@ -127,10 +138,19 @@ public class MainActivity extends AppCompatActivity {
         source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
 
         initPlots();
-//
-//        ecgViewMid.startThread();
-//        ecgViewUp.startThread();
-//        ecgViewDown.startThread();
+
+        alarmXinlv = sharedPreferences.getBoolean("xinlv", false);
+        alarmWendu = sharedPreferences.getBoolean("wendu", false);
+        alarmDianhua = sharedPreferences.getBoolean("dianhua", false);
+        alarmDuanxin = sharedPreferences.getBoolean("duanxin", false);
+        alarmXueyang = sharedPreferences.getBoolean("xueyang", false);
+        alarmYali = sharedPreferences.getBoolean("yali", false);
+        alarmZhenling = sharedPreferences.getBoolean("zhenling", false);
+        alarmZukang = sharedPreferences.getBoolean("zukang", false);
+
+        if (alarmXinlv) {
+//            String xinlvs = findPre
+        }
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
@@ -360,37 +380,22 @@ public class MainActivity extends AppCompatActivity {
             // 心电
             if (action.equals(BroadcastUtil.ACTION_ECG_UPDATE)) {
                 int data = intent.getIntExtra("ECG", 0);
-                int max = intent.getIntExtra("MAX", 0);
-                int min = intent.getIntExtra("MIN", 0);
 
-//                ecgViewUp.setEcgMax(max);
-//                ecgViewUp.setEcgMin(min);
                 ecgViewUp.addEcgData0(data);
-
             }
 
             // SPO2，阻抗，压力
             if (action.equals(BroadcastUtil.ACTION_IMPEDANCE_UPDATE)) {
                 int data = intent.getIntExtra("IMPEDANCE", 0);
-                int max = intent.getIntExtra("MAX", 0);
-                int min = intent.getIntExtra("MIN", 0);
-//
-//                ecgViewMid.setEcgMax(max);
-//                ecgViewMid.setEcgMin(min);
-                ecgViewMid.addEcgData0(data);
 
+                ecgViewMid.addEcgData0(data);
             }
 
             // Gsenso
             if (action.equals(BroadcastUtil.ACTION_STRIKE_UPDATE)) {
                 int data = intent.getIntExtra("STRIKE", 0);
-                int max = intent.getIntExtra("MAX", 0);
-                int min = intent.getIntExtra("MIN", 0);
-//
-//                ecgViewDown.setEcgMin(min);
-//                ecgViewDown.setEcgMax(max);
-                ecgViewDown.addEcgData0(data);
 
+                ecgViewDown.addEcgData0(data);
             }
         }
     };
