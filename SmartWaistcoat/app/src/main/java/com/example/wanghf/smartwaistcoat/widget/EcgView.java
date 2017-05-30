@@ -169,7 +169,7 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
         try {
             float mStartX = startX;
             if (ecg0Datas.size() > 500 / lockWidth) {
-                Log.i("EcgView", "" + ecg0Datas.size());
+//                Log.i("EcgView", "" + ecg0Datas.size());
                 if (startX == 0) {
                     ecgMax = ecgMaxNew;
                     ecgMin = ecgMinNew;
