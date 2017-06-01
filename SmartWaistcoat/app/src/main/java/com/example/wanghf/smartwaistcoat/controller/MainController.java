@@ -66,15 +66,22 @@ public class MainController {
         this.spoQueue = queue;
         this.ecgQueue = ecgQueue;
         this.gsenQueue = gsenQueue;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        filterOn = sharedPreferences.getBoolean("filter", false);
-        source = sharedPreferences.getString("data_source", "组合包1");
     }
 
     public void onResume() {
         controllerThread = new ControllerThread();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        filterOn = sharedPreferences.getBoolean("filter", false);
+        source = sharedPreferences.getString("data_source", "组合包1");
         initFilter();
         controllerThread.start();
+    }
+
+    public void onPause() {
+        if (controllerThread != null) {
+            controllerThread.running = false;
+            controllerThread = null;
+        }
     }
 
     private void initFilter() {

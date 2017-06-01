@@ -23,6 +23,7 @@ public class WaistcoatData implements Serializable, Cloneable {
     private double yali;
     private double xueyang;
     private double dianliang;
+    private boolean tuoluo;
 
     public double getXinlv() {
         return xinlv;
@@ -70,5 +71,13 @@ public class WaistcoatData implements Serializable, Cloneable {
 
     public void setDianliang(double dianliang) {
         this.dianliang = dianliang;
+    }
+
+    public boolean isTuoluo() {
+        return tuoluo;
+    }
+
+    public void setTuoluo(boolean tuoluo) {
+        this.tuoluo = tuoluo;
     }
 }

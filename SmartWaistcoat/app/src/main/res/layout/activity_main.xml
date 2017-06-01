@@ -73,6 +73,15 @@
                         android:text="30.5"
                         android:gravity="center"/>
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.7"
+                        android:textSize="20sp"
+                        android:textColor="@color/off_white"
+                        android:text="脱落"
+                        android:gravity="center"/>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -113,7 +122,17 @@
                         android:layout_height="0dp"
                         android:layout_weight="0.5"
                         android:id="@+id/text_num_dianliang"
-                        android:text="4.2V"
+                        android:text="100%"
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:layout_gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.7"
+                        android:id="@+id/text_num_tuoluo"
+                        android:text="否"
                         android:textSize="20sp"
                         android:gravity="center"
                         android:layout_gravity="center"/>

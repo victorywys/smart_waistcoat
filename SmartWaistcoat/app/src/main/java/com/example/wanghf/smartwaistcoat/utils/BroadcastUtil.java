@@ -22,6 +22,7 @@ public abstract class BroadcastUtil {
     public static final String ACTION_ECG_UPDATE = "com.example.ECG_UPDATE";
     public static final String ACTION_STRIKE_UPDATE = "com.example.STRIKE_UPDATE";
     public static final String ACTION_IMPEDANCE_UPDATE = "com.example.IMPEDANCE_UPDATE";
+    public static final String ACTION_RECONNCET = "com.example.RECONNECT";
 
     private BroadcastUtil() {
         throw new AssertionError();
@@ -29,6 +30,11 @@ public abstract class BroadcastUtil {
 
     public static void makePhoneCall(Context context) {
         Intent intent = new Intent(ACTION_PHONE_CALL);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void reconnect(Context context) {
+        Intent intent = new Intent(ACTION_RECONNCET);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

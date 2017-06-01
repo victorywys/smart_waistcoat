@@ -87,4 +87,14 @@
         android:textColor="@color/ap_white"
         android:gravity="center"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_connect_state"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="重新连接"
+        android:textSize="24sp"
+        android:onClick="onClickReconnect"/>
+
 </RelativeLayout>

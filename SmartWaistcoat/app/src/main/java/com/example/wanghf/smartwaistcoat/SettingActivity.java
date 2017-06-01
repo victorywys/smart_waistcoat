@@ -1,6 +1,7 @@
 package com.example.wanghf.smartwaistcoat;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
+import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 
 /**
  * Created by wanghf on 2017/5/14.
@@ -18,11 +20,14 @@ import com.example.wanghf.smartwaistcoat.controller.MainController;
 public class SettingActivity extends Activity {
 
     private TextView textView;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting);
+
+        context = this;
 
         textView = (TextView) findViewById(R.id.text_connect_state);
 
@@ -55,6 +60,10 @@ public class SettingActivity extends Activity {
      */
     public void onClickAlarm(View view) {
         startActivity(new Intent(SettingActivity.this, AlarmActivity.class));
+    }
+
+    public void onClickReconnect(View view) {
+        BroadcastUtil.reconnect(context);
     }
 
     /**
