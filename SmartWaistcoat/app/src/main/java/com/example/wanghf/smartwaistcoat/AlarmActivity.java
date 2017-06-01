@@ -12,7 +12,6 @@ import com.example.wanghf.myapplication.R;
  */
 
 public class AlarmActivity extends Activity {
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -86,6 +86,13 @@ public class AlarmFragment extends PreferenceFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String input = editText.getText().toString();
+                                String[] str = input.split(",");
+                                if (str.length == 2) {
+                                    SharedPreferences.Editor editor = xinlv.getEditor();
+                                    editor.putInt("xinlv_low", Integer.parseInt(str[0]));
+                                    editor.putInt("xinlv_high", Integer.parseInt(str[1]));
+                                    editor.apply();
+                                }
                                 xinlv.setSummary(input);
                             }
                         })
@@ -112,6 +119,10 @@ public class AlarmFragment extends PreferenceFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 String input = editText.getText().toString();
                                 xueyang.setSummary(input);
+                                int val = Integer.parseInt(input);
+                                SharedPreferences.Editor editor = xueyang.getEditor();
+                                editor.putInt("xueyang_low", val);
+                                editor.apply();
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -136,6 +147,13 @@ public class AlarmFragment extends PreferenceFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String input = editText.getText().toString();
+                                String[] str = input.split(",");
+                                if (str.length == 2) {
+                                    SharedPreferences.Editor editor = wendu.getEditor();
+                                    editor.putInt("wendu_low", Integer.parseInt(str[0]));
+                                    editor.putInt("wendu_high", Integer.parseInt(str[1]));
+                                    editor.apply();
+                                }
                                 wendu.setSummary(input);
                             }
                         })
@@ -162,6 +180,10 @@ public class AlarmFragment extends PreferenceFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 String input = editText.getText().toString();
                                 yali.setSummary(input);
+                                int val = Integer.parseInt(input);
+                                SharedPreferences.Editor editor = yali.getEditor();
+                                editor.putInt("yali_high", val);
+                                editor.apply();
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -187,6 +209,10 @@ public class AlarmFragment extends PreferenceFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 String input = editText.getText().toString();
                                 zukang.setSummary(input);
+                                int val = Integer.parseInt(input);
+                                SharedPreferences.Editor editor = zukang.getEditor();
+                                editor.putInt("zukang_low", val);
+                                editor.apply();
                             }
                         })
                         .setNegativeButton("取消", null)

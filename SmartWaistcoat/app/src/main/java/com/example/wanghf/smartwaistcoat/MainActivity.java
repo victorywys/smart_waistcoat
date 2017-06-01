@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -28,6 +30,7 @@ import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
 import com.example.wanghf.smartwaistcoat.widget.EcgView;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,8 +152,31 @@ public class MainActivity extends AppCompatActivity {
         alarmZukang = sharedPreferences.getBoolean("zukang", false);
 
         if (alarmXinlv) {
-//            String xinlvs = findPre
+            xinlvLow = sharedPreferences.getInt("xinlv_low", Integer.MIN_VALUE);
+            xinlvHigh = sharedPreferences.getInt("xinlv_high", Integer.MAX_VALUE);
         }
+
+        if (alarmWendu) {
+            wenduHigh = sharedPreferences.getInt("wendu_high", Integer.MAX_VALUE);
+            wenduLow = sharedPreferences.getInt("wendu_low", Integer.MIN_VALUE);
+        }
+
+        if (alarmXueyang) {
+            xueyang = sharedPreferences.getInt("xueyang_low", Integer.MIN_VALUE);
+        }
+
+        if (alarmYali) {
+            yali = sharedPreferences.getInt("yali_high", Integer.MAX_VALUE);
+        }
+
+        if (alarmZukang) {
+            zukang = sharedPreferences.getInt("zukang_low", Integer.MIN_VALUE);
+        }
+
+        callNumber = sharedPreferences.getString("contact_call", "");
+        msgNumber1 = sharedPreferences.getString("contact_msg1", "");
+        msgNumber2 = sharedPreferences.getString("contact_msg2", "");
+        msgNumber3 = sharedPreferences.getString("contact_msg3", "");
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BroadcastUtil.ACTION_PHONE_CALL);
@@ -346,6 +372,7 @@ public class MainActivity extends AppCompatActivity {
      * 设置
      */
     public void onClickSettings(View view) {
+//        notifyUser();
         Intent intent = new Intent(context, SettingActivity.class);
         startActivity(intent);
     }
@@ -358,15 +385,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(BroadcastUtil.ACTION_PHONE_CALL)) {
-                call(callNumber);
-            }
-
-            if (action.equals(BroadcastUtil.ACTION_SEND_MESSAGE)) {
-                doSendSMSTo(msgNumber1);
-                doSendSMSTo(msgNumber2);
-                doSendSMSTo(msgNumber3);
-            }
 
             if (action.equals(BroadcastUtil.ACTION_TABLES_UPDATE)) {
                 WaistcoatData waistcoatData = (WaistcoatData) intent.getSerializableExtra("TABLES");
@@ -374,6 +392,8 @@ public class MainActivity extends AppCompatActivity {
                 textViewxueyang.setText(waistcoatData.getXueyang() + "%");
                 textViewDianliang.setText(waistcoatData.getDianliang() + "");
                 textViewXinlv.setText(waistcoatData.getXinlv() + "");
+
+                alarmProcess(waistcoatData);
                 Log.i(TAG, "tables");
             }
 
@@ -400,6 +420,55 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void alarmProcess(WaistcoatData data) {
+        double wendu = data.getWendu();
+        double xinlv = data.getXinlv();
+        double xueyang = data.getXueyang();
+
+        if (alarmDianhua) {
+            if (wendu > wenduHigh || wendu < wenduLow || xinlv > xinlvHigh || xinlv < xinlvLow || xueyang < this.xueyang) {
+                call(callNumber);
+            }
+        }
+        else if (alarmZhenling) {
+            if (wendu > wenduHigh || wendu < wenduLow || xinlv > xinlvHigh || xinlv < xinlvLow || xueyang < this.xueyang) {
+//                call(callNumber);
+                notifyUser();
+            }
+        }
+
+        if (alarmDuanxin) {
+            if (wendu > wenduHigh || wendu < wenduLow) {
+                doSendSMSTo(msgNumber1, "wendu");
+                doSendSMSTo(msgNumber2, "wendu");
+                doSendSMSTo(msgNumber3, "wendu");
+            }
+            else if (xinlv > xinlvHigh || xinlv < xinlvLow) {
+                doSendSMSTo(msgNumber1, "xinlv");
+                doSendSMSTo(msgNumber2, "xinlv");
+                doSendSMSTo(msgNumber3, "xinlv");
+            }
+            else if (xueyang < this.xueyang) {
+                doSendSMSTo(msgNumber1, "xinlv");
+                doSendSMSTo(msgNumber2, "xinlv");
+                doSendSMSTo(msgNumber3, "xinlv");
+            }
+        }
+    }
+
+    private void notifyUser() {
+        MediaPlayer mp = new MediaPlayer();
+        mp.reset();
+        try {
+            mp.setDataSource(context,
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            mp.prepare();
+            mp.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 报警电话
      */
@@ -422,11 +491,10 @@ public class MainActivity extends AppCompatActivity {
      * 调起系统发短信功能
      * @param phoneNumber
      */
-    public void doSendSMSTo(String phoneNumber){
-        String message = "something happens";
+    public void doSendSMSTo(String phoneNumber, String msg){
         if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)){
             Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
-            intent.putExtra("sms_body", message);
+            intent.putExtra("sms_body", msg);
             startActivity(intent);
         }
     }
