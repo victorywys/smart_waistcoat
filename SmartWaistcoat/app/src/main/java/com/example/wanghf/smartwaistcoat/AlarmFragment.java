@@ -44,15 +44,15 @@ public class AlarmFragment extends PreferenceFragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         xinlv = findPreference("xinlv");
-        xinlv.setSummary(sharedPreferences.getBoolean("xinlv", false)? "开" : "关");
+//        xinlv.setSummary(sharedPreferences.getBoolean("xinlv", false)? "开" : "关");
         wendu = findPreference("wendu");
-        wendu.setSummary(sharedPreferences.getBoolean("wendu", false)? "开" : "关");
+//        wendu.setSummary(sharedPreferences.getBoolean("wendu", false)? "开" : "关");
         xueyang = findPreference("xueyang");
-        xueyang.setSummary(sharedPreferences.getBoolean("xueyang", false)? "开" : "关");
+//        xueyang.setSummary(sharedPreferences.getBoolean("xueyang", false)? "开" : "关");
         yali = findPreference("yali");
-        yali.setSummary(sharedPreferences.getBoolean("yali", false)? "开":"关");
+//        yali.setSummary(sharedPreferences.getBoolean("yali", false)? "开":"关");
         zukang = findPreference("zukang");
-        zukang.setSummary(sharedPreferences.getBoolean("zukang", false)? "开":"关");
+//        zukang.setSummary(sharedPreferences.getBoolean("zukang", false)? "开":"关");
         zhenling = findPreference("zhenling");
         zhenling.setSummary(sharedPreferences.getBoolean("zhenling", false)? "开":"关");
         duanxin = findPreference("duanxin");
