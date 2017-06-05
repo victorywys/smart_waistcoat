@@ -192,6 +192,7 @@ public class DataParseService extends Service {
                         }
                         break;
                     default:
+                        state = noneHead;
                         break;
                 }
             }
@@ -217,7 +218,7 @@ public class DataParseService extends Service {
             }
             waistcoatData.setTuoluo((buffer[0] & 0x1) == 1);
             waistcoatData.setXueyang(xueyang);
-            waistcoatData.setWendu(((buffer[6] & 127) + 320) / 10);
+            waistcoatData.setWendu((((buffer[6] & 127) + 320) + 0.0)/ 10);
 
             //更新数据表
 

@@ -23,6 +23,7 @@ public abstract class BroadcastUtil {
     public static final String ACTION_STRIKE_UPDATE = "com.example.STRIKE_UPDATE";
     public static final String ACTION_IMPEDANCE_UPDATE = "com.example.IMPEDANCE_UPDATE";
     public static final String ACTION_RECONNCET = "com.example.RECONNECT";
+    public static final String ACTION_UPDATE_CONNECT = "com.example.UPDATE_CONNECT";
 
     private BroadcastUtil() {
         throw new AssertionError();
@@ -35,6 +36,12 @@ public abstract class BroadcastUtil {
 
     public static void reconnect(Context context) {
         Intent intent = new Intent(ACTION_RECONNCET);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void updateConnect(Context context, boolean connect) {
+        Intent intent = new Intent(ACTION_UPDATE_CONNECT);
+        intent.putExtra("CONNECT", connect);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

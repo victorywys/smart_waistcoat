@@ -142,6 +142,7 @@ public class WiFiConnectService extends Service {
                 } catch (Exception ex) {
                     return;
                 }
+                return;
             }
             editor.putBoolean("connect_state", true);
             editor.apply();
@@ -171,9 +172,11 @@ public class WiFiConnectService extends Service {
                         } catch (Exception ex) {
                             return;
                         }
+                        return;
                     }
                     editor.putBoolean("connect_state", true);
                     editor.apply();
+                    BroadcastUtil.updateConnect(context, true);
                     connectedThread = new ConnectedThread(socket);
                     connectedThread.start();
                 }
@@ -182,6 +185,7 @@ public class WiFiConnectService extends Service {
 
         void cancel() {
             Log.d(TAG, "connectedthread is canceled12333");
+            BroadcastUtil.updateConnect(context, false);
             if (socket != null) {
                 try {
                     socket.close();

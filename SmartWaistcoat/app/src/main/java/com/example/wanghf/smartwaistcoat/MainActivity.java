@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 停止数据
         if (showingTable) {
-            BroadcastUtil.stopData(context, source_id);
+            BroadcastUtil.stopData(context, 6);
             showingTable = false;
         }
 
@@ -372,11 +372,11 @@ public class MainActivity extends AppCompatActivity {
         if (showingTable) {
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.begin));
             showingTable = false;
-            BroadcastUtil.stopData(context, source_id);
+            BroadcastUtil.stopData(context, 6);
         } else {
             buttonDisplayTable.setImageDrawable(getResources().getDrawable(R.drawable.stop));
             showingTable = true;
-            BroadcastUtil.receiveData(context, source_id);
+            BroadcastUtil.receiveData(context, 6);
         }
     }
 

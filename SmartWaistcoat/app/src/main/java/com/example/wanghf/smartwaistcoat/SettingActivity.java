@@ -1,11 +1,14 @@
 package com.example.wanghf.smartwaistcoat;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -40,6 +43,32 @@ public class SettingActivity extends Activity {
         }
 
     }
+
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(statusReceiver);
+    }
+
+    public void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter(BroadcastUtil.ACTION_UPDATE_CONNECT);
+        LocalBroadcastManager.getInstance(context).registerReceiver(statusReceiver, intentFilter);
+    }
+
+    private BroadcastReceiver statusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(BroadcastUtil.ACTION_UPDATE_CONNECT)) {
+                boolean connect = intent.getBooleanExtra("CONNECT", false);
+                if (connect) {
+                    textView.setText("连接状态: 已连接");
+                }
+                else  {
+                    textView.setText("连接状态: 未连接");
+                }
+            }
+        }
+    };
 
     /**
      * 个人信息
