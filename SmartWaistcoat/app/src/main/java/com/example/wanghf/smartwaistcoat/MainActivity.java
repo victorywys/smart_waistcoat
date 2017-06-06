@@ -40,8 +40,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
     private String msgNumber1 = "";
     private String msgNumber2 = "";
     private String msgNumber3 = "";
+
+    private String userName = "小明";
+    private int userAge = 20;
 
     private int source_id = 7;
 
@@ -182,6 +189,9 @@ public class MainActivity extends AppCompatActivity {
         if (alarmZukang) {
             zukang = sharedPreferences.getInt("zukang_low", Integer.MIN_VALUE);
         }
+
+        userName = sharedPreferences.getString("user_name", "小明");
+        userAge = sharedPreferences.getInt("user_age", 20);
 
         callNumber = sharedPreferences.getString("contact_call", "");
         msgNumber1 = sharedPreferences.getString("contact_msg1", "");
@@ -384,8 +394,9 @@ public class MainActivity extends AppCompatActivity {
      * 设置
      */
     public void onClickSettings(View view) {
-        Intent intent = new Intent(context, SettingActivity.class);
-        startActivity(intent);
+        playSound(context);
+//        Intent intent = new Intent(context, SettingActivity.class);
+//        startActivity(intent);
     }
 
 
@@ -454,20 +465,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (alarmDuanxin) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            String date = format.format(new Date());
+            String msg = "姓名: " + userName + ", " + "年龄: " + userAge + ", " + "时间: " + date +
+                    "报警原因: ";
             if (wendu > wenduHigh || wendu < wenduLow) {
-                doSendSMSTo(msgNumber1, "wendu");
-                doSendSMSTo(msgNumber2, "wendu");
-                doSendSMSTo(msgNumber3, "wendu");
+                doSendSMSTo(msgNumber1, msg + "温度异常");
+                doSendSMSTo(msgNumber2, msg + "温度异常");
+                doSendSMSTo(msgNumber3, msg + "温度异常");
             }
             else if (xinlv > xinlvHigh || xinlv < xinlvLow) {
-                doSendSMSTo(msgNumber1, "xinlv");
-                doSendSMSTo(msgNumber2, "xinlv");
-                doSendSMSTo(msgNumber3, "xinlv");
+                doSendSMSTo(msgNumber1, msg + "心率异常");
+                doSendSMSTo(msgNumber2, msg + "心率异常");
+                doSendSMSTo(msgNumber3, msg + "心率异常");
             }
             else if (xueyang < this.xueyang) {
-                doSendSMSTo(msgNumber1, "xinlv");
-                doSendSMSTo(msgNumber2, "xinlv");
-                doSendSMSTo(msgNumber3, "xinlv");
+                doSendSMSTo(msgNumber1, msg + "血氧异常");
+                doSendSMSTo(msgNumber2, msg + "血氧异常");
+                doSendSMSTo(msgNumber3, msg + "血氧异常");
             }
         }
     }
@@ -524,13 +539,15 @@ public class MainActivity extends AppCompatActivity {
         NotificationManager mgr = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         Notification nt = new Notification();
-        File file = new File(Environment.getExternalStorageDirectory() + "/AAA/" + "clock.mp3");
-        if (file.exists()) {
-            nt.sound = Uri.parse(Environment.getExternalStorageDirectory() + "/AAA/" + "clock.mp3");
-        }
-        else {
-            nt.defaults = Notification.DEFAULT_SOUND;
-        }
+//        File file = new File("android.resource://" + getPackageName() + "/" + R.raw.clock);
+//        if (file.exists()) {
+//            nt.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
+//        }
+//        else {
+//            nt.defaults = Notification.DEFAULT_SOUND;
+//        }
+        Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
+        nt.sound = sound;
         int soundId = new Random(System.currentTimeMillis())
                 .nextInt(Integer.MAX_VALUE);
         mgr.notify(soundId, nt);
