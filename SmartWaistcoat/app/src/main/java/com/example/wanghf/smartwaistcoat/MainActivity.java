@@ -394,9 +394,9 @@ public class MainActivity extends AppCompatActivity {
      * 设置
      */
     public void onClickSettings(View view) {
-        playSound(context);
-//        Intent intent = new Intent(context, SettingActivity.class);
-//        startActivity(intent);
+//        playSound(context);
+        Intent intent = new Intent(context, SettingActivity.class);
+        startActivity(intent);
     }
 
 

@@ -231,8 +231,17 @@ public class WiFiConnectService extends Service {
             while (!interrupted()) {
                 try {
                     bufferLength = inputStream.read(buffer);
-                } catch (Exception e) {
-                    break;
+                }
+                catch (IOException ex) {
+                    continue;
+                }
+                catch (Exception e) {
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("connect_state", false);
+                    editor.apply();
+                    cancel();
+                    return;
                 }
                 if (bufferLength > 0) {
                     for (int i = 0; i < bufferLength; i++) {
