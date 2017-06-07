@@ -44,15 +44,19 @@ public class AlarmFragment extends PreferenceFragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         xinlv = findPreference("xinlv");
-//        xinlv.setSummary(sharedPreferences.getBoolean("xinlv", false)? "开" : "关");
+        String xinlvl = String.format("%d,%d", sharedPreferences.getInt("xinlv_low", 0),
+                sharedPreferences.getInt("xinlv_high", 0));
+        xinlv.setSummary(xinlvl);
         wendu = findPreference("wendu");
-//        wendu.setSummary(sharedPreferences.getBoolean("wendu", false)? "开" : "关");
+        String wendul = String.format("%d,%d", sharedPreferences.getInt("wendu_low", 0),
+                sharedPreferences.getInt("wendu_high", 0));
+        wendu.setSummary(wendul);
         xueyang = findPreference("xueyang");
-//        xueyang.setSummary(sharedPreferences.getBoolean("xueyang", false)? "开" : "关");
+        xueyang.setSummary(String.valueOf(sharedPreferences.getInt("xueyang_low", 0)));
         yali = findPreference("yali");
-//        yali.setSummary(sharedPreferences.getBoolean("yali", false)? "开":"关");
+        yali.setSummary(String.valueOf(sharedPreferences.getInt("yali_high", 0)));
         zukang = findPreference("zukang");
-//        zukang.setSummary(sharedPreferences.getBoolean("zukang", false)? "开":"关");
+        zukang.setSummary(String.valueOf(sharedPreferences.getInt("zukang_low", 0)));
         zhenling = findPreference("zhenling");
         zhenling.setSummary(sharedPreferences.getBoolean("zhenling", false)? "开":"关");
         duanxin = findPreference("duanxin");
@@ -92,8 +96,11 @@ public class AlarmFragment extends PreferenceFragment {
                                     editor.putInt("xinlv_low", Integer.parseInt(str[0]));
                                     editor.putInt("xinlv_high", Integer.parseInt(str[1]));
                                     editor.apply();
+                                    xinlv.setSummary(input);
                                 }
-                                xinlv.setSummary(input);
+                                else {
+                                    xinlv.setSummary("输入格式有误");
+                                }
                             }
                         })
                         .setNegativeButton("取消", null)
@@ -153,8 +160,12 @@ public class AlarmFragment extends PreferenceFragment {
                                     editor.putInt("wendu_low", Integer.parseInt(str[0]));
                                     editor.putInt("wendu_high", Integer.parseInt(str[1]));
                                     editor.apply();
+                                    wendu.setSummary(input);
                                 }
-                                wendu.setSummary(input);
+                                else {
+                                    wendu.setSummary("输入格式有误");
+                                }
+
                             }
                         })
                         .setNegativeButton("取消", null)
