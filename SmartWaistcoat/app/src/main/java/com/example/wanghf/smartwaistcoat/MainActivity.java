@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
@@ -110,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
     private int yali;
     private int zukang;
 
+    private String msgContent = "姓名: " + userName + ", " + "年龄: " + userAge + ", "+ "报警原因: ";
+
     private Preference preferenceXinlv;
 
     private boolean emergy = false;
@@ -156,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mainController.onResume();
+
+        emergy = false;
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
@@ -479,17 +484,17 @@ public class MainActivity extends AppCompatActivity {
             String date = format.format(new Date());
             String msg = "姓名: " + userName + ", " + "年龄: " + userAge + ", " + "时间: " + date +
                     "报警原因: ";
-            if (wendu > wenduHigh || wendu < wenduLow) {
+            if (alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) {
                 doSendSMSTo(msgNumber1, msg + "温度异常");
                 doSendSMSTo(msgNumber2, msg + "温度异常");
                 doSendSMSTo(msgNumber3, msg + "温度异常");
             }
-            else if (xinlv > xinlvHigh || xinlv < xinlvLow) {
+            else if (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) {
                 doSendSMSTo(msgNumber1, msg + "心率异常");
                 doSendSMSTo(msgNumber2, msg + "心率异常");
                 doSendSMSTo(msgNumber3, msg + "心率异常");
             }
-            else if (xueyang < this.xueyang) {
+            else if (alarmXueyang && (xueyang < this.xueyang)) {
                 doSendSMSTo(msgNumber1, msg + "血氧异常");
                 doSendSMSTo(msgNumber2, msg + "血氧异常");
                 doSendSMSTo(msgNumber3, msg + "血氧异常");
@@ -533,28 +538,32 @@ public class MainActivity extends AppCompatActivity {
      * @param phoneNumber
      */
     public void doSendSMSTo(String phoneNumber, String msg){
-//        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-//                   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 0x1001);
-//                return;
-            }
-            else {
-                PendingIntent paIntent = PendingIntent.getBroadcast(this, 0, new Intent(), 0);
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(phoneNumber, null, msg, paIntent, null);
-            }
 
-//            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
-//            intent.putExtra("sms_body", msg);
-//            startActivity(intent);
-//        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
+
+            } else {
+                // permission is already granted
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 1);
+            }
+        } else {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNumber, null,msg, null, null);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(msgNumber1, null, msgContent, null, null);
+                }
+            }
+        }
     }
 
     // 播放默认铃声
@@ -563,18 +572,11 @@ public class MainActivity extends AppCompatActivity {
         NotificationManager mgr = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         Notification nt = new Notification();
-//        File file = new File("android.resource://" + getPackageName() + "/" + R.raw.clock);
-//        if (file.exists()) {
-//            nt.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
-//        }
-//        else {
-//            nt.defaults = Notification.DEFAULT_SOUND;
-//        }
-        Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
-        nt.sound = sound;
-        int soundId = new Random(System.currentTimeMillis())
-                .nextInt(Integer.MAX_VALUE);
-        mgr.notify(soundId, nt);
+
+        nt.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
+//        int soundId = new Random(System.currentTimeMillis())
+//                .nextInt(Integer.MAX_VALUE);
+        mgr.notify(1, nt);
     }
 
     /**
