@@ -133,6 +133,7 @@ public class WiFiConnectService extends Service {
             try {
                 socket = new Socket(InetAddress.getByName(IP), PORT);
             } catch (Exception e) {
+                BroadcastUtil.updateConnect(context, false);
                 editor.putBoolean("connect_state", false);
                 editor.apply();
                 try {
@@ -146,6 +147,7 @@ public class WiFiConnectService extends Service {
             }
             editor.putBoolean("connect_state", true);
             editor.apply();
+            BroadcastUtil.updateConnect(context, true);
             connectedThread = new ConnectedThread(socket);
             connectedThread.start();
         }
@@ -157,30 +159,9 @@ public class WiFiConnectService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(BroadcastUtil.ACTION_RECONNCET)) {
-                    if (socket != null) {
-                        cancel();
-                    }
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    try {
-                        socket = new Socket(InetAddress.getByName(IP), PORT);
-                    } catch (Exception e) {
-                        editor.putBoolean("connect_state", false);
-                        editor.apply();
-                        try {
-                            if (socket != null) {
-                                socket.close();
-                            }
-                        } catch (Exception ex) {
-                            return;
-                        }
-                        return;
-                    }
-                    editor.putBoolean("connect_state", true);
-                    editor.apply();
-                    BroadcastUtil.updateConnect(context, true);
-                    connectedThread = new ConnectedThread(socket);
-                    connectedThread.start();
+                    cancel();
+                    connectThread = new ConnectThread();
+                    connectThread.start();
                 }
             }
         };

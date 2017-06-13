@@ -103,7 +103,7 @@ public class SettingActivity extends Activity {
     }
 
     public void onClickReconnect(View view) {
-        new Thread(myRun).start();
+        BroadcastUtil.reconnect(context);
     }
 
     /**
@@ -123,30 +123,30 @@ public class SettingActivity extends Activity {
     public void onClickFilter(View view) {
         startActivity(new Intent(SettingActivity.this, FilterActivity.class));
     }
-
-    Runnable myRun = new Runnable() {
-        @Override
-        public void run() {
-            BroadcastUtil.reconnect(context);
 //
-            Message msg = new Message();
-            Bundle data = new Bundle();
-            data.putString("value", "请求结果");
-            msg.setData(data);
-            handler.sendMessage(msg);
-        }
-    };
-
-
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String val = data.getString("value");
-            Log.i("mylog", "请求结果为-->" + val);
-            // TODO
-            // UI界面的更新等相关操作
-        }
-    };
+//    Runnable myRun = new Runnable() {
+//        @Override
+//        public void run() {
+//            BroadcastUtil.reconnect(context);
+////
+//            Message msg = new Message();
+//            Bundle data = new Bundle();
+//            data.putString("value", "请求结果");
+//            msg.setData(data);
+//            handler.sendMessage(msg);
+//        }
+//    };
+//
+//
+//    Handler handler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            Bundle data = msg.getData();
+//            String val = data.getString("value");
+//            Log.i("mylog", "请求结果为-->" + val);
+//            // TODO
+//            // UI界面的更新等相关操作
+//        }
+//    };
 }
