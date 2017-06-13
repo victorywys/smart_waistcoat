@@ -157,7 +157,9 @@ public class WiFiConnectService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(BroadcastUtil.ACTION_RECONNCET)) {
-                    cancel();
+                    if (socket != null) {
+                        cancel();
+                    }
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     try {

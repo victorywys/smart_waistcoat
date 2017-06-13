@@ -216,8 +216,9 @@ public class DataParseService extends Service {
             else {
                 waistcoatData.setXinlv(xinlv);
             }
-            waistcoatData.setTuoluo((buffer[0] & 0x1) == 1);
+            waistcoatData.setTuoluo(!(buffer[0] == -128));
             waistcoatData.setXueyang(xueyang);
+//            int a = buffer[6] & 127;
             waistcoatData.setWendu((((buffer[6] & 127) + 320) + 0.0)/ 10);
 
             //更新数据表

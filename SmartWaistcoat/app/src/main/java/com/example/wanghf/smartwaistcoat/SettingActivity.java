@@ -7,14 +7,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
+import com.example.wanghf.smartwaistcoat.inputdata.WiFiConnectService;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 
 /**
  * Created by wanghf on 2017/5/14.
@@ -24,6 +33,8 @@ public class SettingActivity extends Activity {
 
     private TextView textView;
     private Context context;
+
+//    private Thread
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +52,6 @@ public class SettingActivity extends Activity {
         else {
             textView.setText("连接状态: 未连接");
         }
-
     }
 
     public void onPause() {
@@ -51,6 +61,7 @@ public class SettingActivity extends Activity {
 
     public void onResume() {
         super.onResume();
+        textView.setText("连接状态: 未连接");
         IntentFilter intentFilter = new IntentFilter(BroadcastUtil.ACTION_UPDATE_CONNECT);
         LocalBroadcastManager.getInstance(context).registerReceiver(statusReceiver, intentFilter);
     }
@@ -92,7 +103,7 @@ public class SettingActivity extends Activity {
     }
 
     public void onClickReconnect(View view) {
-        BroadcastUtil.reconnect(context);
+        new Thread(myRun).start();
     }
 
     /**
@@ -112,4 +123,30 @@ public class SettingActivity extends Activity {
     public void onClickFilter(View view) {
         startActivity(new Intent(SettingActivity.this, FilterActivity.class));
     }
+
+    Runnable myRun = new Runnable() {
+        @Override
+        public void run() {
+            BroadcastUtil.reconnect(context);
+//
+            Message msg = new Message();
+            Bundle data = new Bundle();
+            data.putString("value", "请求结果");
+            msg.setData(data);
+            handler.sendMessage(msg);
+        }
+    };
+
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String val = data.getString("value");
+            Log.i("mylog", "请求结果为-->" + val);
+            // TODO
+            // UI界面的更新等相关操作
+        }
+    };
 }

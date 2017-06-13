@@ -18,6 +18,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
@@ -110,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
     private int zukang;
 
     private Preference preferenceXinlv;
+
+    private boolean emergy = false;
 
     private final int ECG_WIDTH = 1;
     private final int SPO_WIDTH = 1;
@@ -453,18 +456,25 @@ public class MainActivity extends AppCompatActivity {
         double xinlv = data.getXinlv();
         double xueyang = data.getXueyang();
 
+        if (emergy) {
+            return;
+        }
+
         if (alarmDianhua) {
             if (wendu > wenduHigh || wendu < wenduLow || xinlv > xinlvHigh || xinlv < xinlvLow || xueyang < this.xueyang) {
+                emergy = true;
                 call(callNumber);
             }
         }
         else if (alarmZhenling) {
             if (wendu > wenduHigh || wendu < wenduLow || xinlv > xinlvHigh || xinlv < xinlvLow || xueyang < this.xueyang) {
+                emergy = true;
                 playSound(context);
             }
         }
 
         if (alarmDuanxin) {
+            emergy = true;
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
             String date = format.format(new Date());
             String msg = "姓名: " + userName + ", " + "年龄: " + userAge + ", " + "时间: " + date +
@@ -523,14 +533,28 @@ public class MainActivity extends AppCompatActivity {
      * @param phoneNumber
      */
     public void doSendSMSTo(String phoneNumber, String msg){
-        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
-            PendingIntent paIntent = PendingIntent.getBroadcast(this, 0, new Intent(), 0);
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNumber, null, msg, paIntent, null);
+//        if(PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+//                   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 0x1001);
+//                return;
+            }
+            else {
+                PendingIntent paIntent = PendingIntent.getBroadcast(this, 0, new Intent(), 0);
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(phoneNumber, null, msg, paIntent, null);
+            }
+
 //            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"+phoneNumber));
 //            intent.putExtra("sms_body", msg);
 //            startActivity(intent);
-        }
+//        }
     }
 
     // 播放默认铃声
