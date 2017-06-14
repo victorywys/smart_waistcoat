@@ -466,13 +466,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (alarmDianhua) {
-            if (wendu > wenduHigh || wendu < wenduLow || xinlv > xinlvHigh || xinlv < xinlvLow || xueyang < this.xueyang) {
+            if ((alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) ||
+                    (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) ||
+                    (alarmXueyang && xueyang < this.xueyang)) {
                 emergy = true;
                 call(callNumber);
             }
         }
         else if (alarmZhenling) {
-            if (wendu > wenduHigh || wendu < wenduLow || xinlv > xinlvHigh || xinlv < xinlvLow || xueyang < this.xueyang) {
+            if ((alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) ||
+                    (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) ||
+                    (alarmXueyang && xueyang < this.xueyang)) {
                 emergy = true;
                 playSound(context);
             }
@@ -574,8 +578,8 @@ public class MainActivity extends AppCompatActivity {
         Notification nt = new Notification();
 
         nt.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
-//        int soundId = new Random(System.currentTimeMillis())
-//                .nextInt(Integer.MAX_VALUE);
+        int soundId = new Random(System.currentTimeMillis())
+                .nextInt(Integer.MAX_VALUE);
         mgr.notify(1, nt);
     }
 
