@@ -61,7 +61,7 @@ public class SettingActivity extends Activity {
 
     public void onResume() {
         super.onResume();
-        textView.setText("连接状态: 未连接");
+//        textView.setText("连接状态: 未连接");
         IntentFilter intentFilter = new IntentFilter(BroadcastUtil.ACTION_UPDATE_CONNECT);
         LocalBroadcastManager.getInstance(context).registerReceiver(statusReceiver, intentFilter);
     }

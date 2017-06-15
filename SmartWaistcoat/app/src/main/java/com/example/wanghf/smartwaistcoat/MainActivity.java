@@ -403,6 +403,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onClickSettings(View view) {
 //        playSound(context);
+//        doSendSMSTo("18810690716", "test");
         Intent intent = new Intent(context, SettingActivity.class);
         startActivity(intent);
     }
@@ -547,6 +548,7 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
 
+
             } else {
                 // permission is already granted
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 1);
@@ -573,14 +575,39 @@ public class MainActivity extends AppCompatActivity {
     // 播放默认铃声
     // 返回Notification id
     private void playSound(final Context context) {
-        NotificationManager mgr = (NotificationManager) context
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification nt = new Notification();
+//        NotificationManager mgr = (NotificationManager) context
+//                .getSystemService(Context.NOTIFICATION_SERVICE);
+//        Notification nt = new Notification();
+//
+//        nt.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
+//        int soundId = new Random(System.currentTimeMillis())
+//                .nextInt(Integer.MAX_VALUE);
+//        mgr.notify(1, nt);
+        Log.e("ee", "正在响铃");
+        // 使用来电铃声的铃声路径
+//        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
+        // 如果为空，才构造，不为空，说明之前有构造过
 
-        nt.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
-        int soundId = new Random(System.currentTimeMillis())
-                .nextInt(Integer.MAX_VALUE);
-        mgr.notify(1, nt);
+        MediaPlayer mMediaPlayer = new MediaPlayer();
+        try {
+            mMediaPlayer.setDataSource(context, uri);
+//            mMediaPlayer.setLooping(true); //循环播放
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
