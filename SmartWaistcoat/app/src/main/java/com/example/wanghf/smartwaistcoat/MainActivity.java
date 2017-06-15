@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String msgContent = "姓名: " + userName + ", " + "年龄: " + userAge + ", "+ "报警原因: ";
 
-    private Preference preferenceXinlv;
+    private Thread updateEmergencyThread = null;
 
     private boolean emergy = false;
 
@@ -159,8 +159,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mainController.onResume();
-
-        emergy = false;
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         source_id = sourceMap.get(sharedPreferences.getString("data_source", "组合包1"));
@@ -470,6 +468,7 @@ public class MainActivity extends AppCompatActivity {
             if ((alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) ||
                     (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) ||
                     (alarmXueyang && xueyang < this.xueyang)) {
+                updateEmergencyStatus();
                 emergy = true;
                 call(callNumber);
             }
@@ -479,12 +478,14 @@ public class MainActivity extends AppCompatActivity {
                     (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) ||
                     (alarmXueyang && xueyang < this.xueyang)) {
                 emergy = true;
+                updateEmergencyStatus();
                 playSound(context);
             }
         }
 
         if (alarmDuanxin) {
             emergy = true;
+            updateEmergencyStatus();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
             String date = format.format(new Date());
             String msg = "姓名: " + userName + ", " + "年龄: " + userAge + ", " + "时间: " + date +
@@ -507,16 +508,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void notifyUser() {
-        MediaPlayer mp = new MediaPlayer();
-        mp.reset();
-        try {
-            mp.setDataSource(context,
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-            mp.prepare();
-            mp.start();
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * 每1分钟更新一次用户信息
+     */
+    private void updateEmergencyStatus() {
+        stopUpdateEmergency();
+        updateEmergencyThread = new Thread() {
+            public void run() {
+//                while(!interrupted()) {
+                    try {
+                        Thread.sleep(60000);
+                        emergy = false;
+                    } catch (Exception e) {
+                    }
+//                }
+            }
+        };
+        updateEmergencyThread.start();
+    }
+
+    private void stopUpdateEmergency() {
+        if (updateEmergencyThread != null && updateEmergencyThread.isAlive()) {
+            try {
+                updateEmergencyThread.interrupt();
+            }catch (Exception ignore){}
         }
     }
 
@@ -641,7 +656,7 @@ public class MainActivity extends AppCompatActivity {
                 datas.add(Integer.parseInt(str));
             }
 
-            int curAvg = 0;
+//            int curAvg = 0;
 //            for (int i = 0; i < ECG_COUNT; i++) {
 //                curAvg = (curAvg * i + datas.get(i)) / (i + 1);
 //            }
