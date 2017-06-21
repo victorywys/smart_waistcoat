@@ -484,23 +484,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (alarmDuanxin) {
-            emergy = true;
             updateEmergencyStatus();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
             String date = format.format(new Date());
             String msg = "姓名: " + userName + ", " + "年龄: " + userAge + ", " + "时间: " + date +
                     "报警原因: ";
             if (alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) {
+                emergy = true;
                 doSendSMSTo(msgNumber1, msg + "温度异常");
                 doSendSMSTo(msgNumber2, msg + "温度异常");
                 doSendSMSTo(msgNumber3, msg + "温度异常");
             }
             else if (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) {
+                emergy = true;
                 doSendSMSTo(msgNumber1, msg + "心率异常");
                 doSendSMSTo(msgNumber2, msg + "心率异常");
                 doSendSMSTo(msgNumber3, msg + "心率异常");
             }
             else if (alarmXueyang && (xueyang < this.xueyang)) {
+                emergy = true;
                 doSendSMSTo(msgNumber1, msg + "血氧异常");
                 doSendSMSTo(msgNumber2, msg + "血氧异常");
                 doSendSMSTo(msgNumber3, msg + "血氧异常");
