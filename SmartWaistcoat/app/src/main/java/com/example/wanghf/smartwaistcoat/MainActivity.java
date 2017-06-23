@@ -391,10 +391,10 @@ public class MainActivity extends AppCompatActivity {
      * 设置
      */
     public void onClickSettings(View view) {
-        playSound(context);
+//        playSound(context);
 //        doSendSMSTo("18810690716", "test");
-//        Intent intent = new Intent(context, SettingActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(context, SettingActivity.class);
+        startActivity(intent);
     }
 
 
