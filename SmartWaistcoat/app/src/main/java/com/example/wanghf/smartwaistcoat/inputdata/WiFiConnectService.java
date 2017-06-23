@@ -227,6 +227,7 @@ public class WiFiConnectService extends Service {
                     return;
                 }
                 if (bufferLength > 0) {
+                    fileUtil.write2SDFromInputByte("AAA", "DATA.txt", buffer.clone());
                     for (int i = 0; i < bufferLength; i++) {
                             try {
                                 revBytes.put(buffer[i]);
