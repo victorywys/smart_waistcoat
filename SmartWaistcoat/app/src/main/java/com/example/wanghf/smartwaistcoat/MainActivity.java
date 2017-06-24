@@ -1,9 +1,6 @@
 package com.example.wanghf.smartwaistcoat;
 
 import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,18 +8,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
-import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Environment;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
@@ -34,25 +26,18 @@ import com.example.wanghf.myapplication.R;
 import com.example.wanghf.smartwaistcoat.controller.MainController;
 import com.example.wanghf.smartwaistcoat.inputdata.WaistcoatData;
 import com.example.wanghf.smartwaistcoat.utils.BroadcastUtil;
+import com.example.wanghf.smartwaistcoat.utils.FileUtil;
 import com.example.wanghf.smartwaistcoat.widget.EcgView;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Time;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -111,11 +96,15 @@ public class MainActivity extends AppCompatActivity {
     private int yali;
     private int zukang;
 
+    private MediaPlayer mMediaPlayer;
+
     private String msgContent = "姓名: " + userName + ", " + "年龄: " + userAge + ", "+ "报警原因: ";
 
     private Thread updateEmergencyThread = null;
 
-    private boolean emergy = false;
+    private boolean emergeCall = false;
+    private boolean emergeMsg = false;
+    private boolean emergeAlarm = false;
 
     private final int ECG_WIDTH = 1;
     private final int SPO_WIDTH = 1;
@@ -146,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
+
+        mMediaPlayer = new MediaPlayer();
 
         mainController = new MainController(context, MainApplication.getSpoQueue(),
                 MainApplication.getEcgQueue(), MainApplication.getGsenQueue());
@@ -460,49 +451,47 @@ public class MainActivity extends AppCompatActivity {
         double xinlv = data.getXinlv();
         double xueyang = data.getXueyang();
 
-        if (emergy) {
-            return;
-        }
-
-        if (alarmDianhua) {
+        if (alarmDianhua && !emergeCall) {
             if ((alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) ||
                     (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) ||
                     (alarmXueyang && xueyang < this.xueyang)) {
                 updateEmergencyStatus();
-                emergy = true;
+                emergeCall = true;
                 call(callNumber);
             }
         }
-        else if (alarmZhenling) {
+        else if (alarmZhenling && !emergeAlarm) {
             if ((alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) ||
                     (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) ||
                     (alarmXueyang && xueyang < this.xueyang)) {
-                emergy = true;
+                emergeAlarm = true;
                 updateEmergencyStatus();
                 playSound(context);
             }
         }
 
-        if (alarmDuanxin) {
+
+        if (alarmDuanxin && emergeMsg) {
+            emergeMsg = true;
             updateEmergencyStatus();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
             String date = format.format(new Date());
             String msg = "姓名: " + userName + ", " + "年龄: " + userAge + ", " + "时间: " + date +
                     "报警原因: ";
             if (alarmWendu && (wendu > wenduHigh || wendu < wenduLow)) {
-                emergy = true;
+                emergeMsg = true;
                 doSendSMSTo(msgNumber1, msg + "温度异常");
                 doSendSMSTo(msgNumber2, msg + "温度异常");
                 doSendSMSTo(msgNumber3, msg + "温度异常");
             }
             else if (alarmXinlv && (xinlv > xinlvHigh || xinlv < xinlvLow)) {
-                emergy = true;
+                emergeMsg = true;
                 doSendSMSTo(msgNumber1, msg + "心率异常");
                 doSendSMSTo(msgNumber2, msg + "心率异常");
                 doSendSMSTo(msgNumber3, msg + "心率异常");
             }
             else if (alarmXueyang && (xueyang < this.xueyang)) {
-                emergy = true;
+                emergeMsg = true;
                 doSendSMSTo(msgNumber1, msg + "血氧异常");
                 doSendSMSTo(msgNumber2, msg + "血氧异常");
                 doSendSMSTo(msgNumber3, msg + "血氧异常");
@@ -520,7 +509,9 @@ public class MainActivity extends AppCompatActivity {
 //                while(!interrupted()) {
                     try {
                         Thread.sleep(60000);
-                        emergy = false;
+                        emergeCall = false;
+                        emergeMsg = false;
+                        emergeAlarm = false;
                     } catch (Exception e) {
                     }
 //                }
@@ -600,16 +591,17 @@ public class MainActivity extends AppCompatActivity {
 //        int soundId = new Random(System.currentTimeMillis())
 //                .nextInt(Integer.MAX_VALUE);
 //        mgr.notify(1, nt);
+
         Log.e("ee", "正在响铃");
         // 使用来电铃声的铃声路径
 //        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.clock);
         // 如果为空，才构造，不为空，说明之前有构造过
 
-        MediaPlayer mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = new MediaPlayer();
         try {
             mMediaPlayer.setDataSource(context, uri);
-//            mMediaPlayer.setLooping(true); //循环播放
+            mMediaPlayer.setLooping(true); //循环播放
             mMediaPlayer.prepare();
             mMediaPlayer.start();
         } catch (IllegalArgumentException e) {
@@ -625,8 +617,14 @@ public class MainActivity extends AppCompatActivity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        findViewById(R.id.button_stop_alarm).setVisibility(View.VISIBLE);
     }
 
+    public void onClickStopAlarm(View view) {
+        mMediaPlayer.stop();
+        findViewById(R.id.button_stop_alarm).setVisibility(View.GONE);
+    }
     /**
      * 模拟心电发送，心电数据是一秒250个包，所以
      */
