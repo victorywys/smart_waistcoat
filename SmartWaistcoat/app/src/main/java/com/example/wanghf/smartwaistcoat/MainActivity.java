@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
     private void initPlots() {
 
         ecgViewUp = (EcgView) findViewById(R.id.ecg_view_up);
+        ecgViewUp.setAxisRate(0.2);
         ecgViewMid = (EcgView) findViewById(R.id.ecg_view_mid);
         ecgViewDown = (EcgView) findViewById(R.id.ecg_view_down);
 

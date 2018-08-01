@@ -35,6 +35,8 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
     public  boolean isRunning;
     private Canvas mCanvas;
 
+    private double axisRate = 0;
+
     private double ecgMax = 32000000;//心电的最大值
     private double ecgMin = 0;
     private double ecgMaxNew = Integer.MIN_VALUE;
@@ -171,8 +173,8 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
             if (ecg0Datas.size() > 500 / lockWidth) {
 //                Log.i("EcgView", "" + ecg0Datas.size());
                 if (startX == 0) {
-                    ecgMax = ecgMaxNew;
-                    ecgMin = ecgMinNew;
+                    ecgMax = ecgMaxNew + Math.abs(ecgMaxNew) * axisRate;
+                    ecgMin = ecgMinNew - Math.abs(ecgMaxNew) * axisRate;
                     ecgYRatio = mHeight / (ecgMax - ecgMin);
                     ecgMinNew = Integer.MAX_VALUE;
                     ecgMaxNew = Integer.MIN_VALUE;
@@ -218,5 +220,9 @@ public class EcgView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setLockWidth(float width) {
         lockWidth = width;
+    }
+
+    public void setAxisRate(double newval) {
+        axisRate = newval;
     }
 }
